@@ -26,6 +26,7 @@ class _ProductManagerState extends State<ProductManager> {
   void _addProduct(String product) {
     setState(() {
       _products.add(product);
+      print("Basel: Just for debugging purpose");
     });
   }
 
