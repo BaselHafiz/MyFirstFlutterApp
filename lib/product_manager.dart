@@ -3,31 +3,12 @@ import 'package:flutter/material.dart';
 import './products.dart';
 import './product_control.dart';
 
-class ProductManager extends StatefulWidget {
-  final String startingProduct;
+class ProductManager extends StatelessWidget {
+  final List<Map<String, String>> _products;
+  final Function deleteProduct;
+  final Function addProduct;
 
-  ProductManager({this.startingProduct});
-
-  @override
-  State<StatefulWidget> createState() {
-    return _ProductManagerState();
-  }
-}
-
-class _ProductManagerState extends State<ProductManager> {
-  List<String> _products = List();
-
-  @override
-  void initState() {
-    if (widget.startingProduct != null) _products.add(widget.startingProduct);
-    super.initState();
-  }
-
-  void _addProduct(String product) {
-    setState(() {
-      _products.add(product);
-    });
-  }
+  ProductManager(this._products, this.addProduct, this.deleteProduct);
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +18,10 @@ class _ProductManagerState extends State<ProductManager> {
           margin: EdgeInsets.all(5),
           // Pass the function '_addProduct' to execute 'SetState' inside of
           // the statelessWidget
-          child: ProductControl(_addProduct),
+          child: ProductControl(addProduct),
         ),
         Expanded(
-          child: Products(_products),
+          child: Products(_products, deleteProduct: deleteProduct),
         )
       ],
     );
