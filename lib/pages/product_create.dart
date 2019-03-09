@@ -14,32 +14,38 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        TextField(
-          onChanged: (String value) {
-            setState(() {
-              _title = value;
-            });
-          },
-        ),
-        TextField(
-          maxLines: 3,
-          onChanged: (String value) {
-            setState(() {
-              _description = value;
-            });
-          },
-        ),
-        TextField(
-          keyboardType: TextInputType.number,
-          onChanged: (String value) {
-            setState(() {
-              _price = double.parse(value);
-            });
-          },
-        ),
-      ],
+    return Container(
+      margin: EdgeInsets.all(15),
+      child: Column(
+        children: <Widget>[
+          TextField(
+            decoration: InputDecoration(labelText: 'Product Title'),
+            onChanged: (String value) {
+              setState(() {
+                _title = value;
+              });
+            },
+          ),
+          TextField(
+            decoration: InputDecoration(labelText: 'Product Description'),
+            maxLines: 3,
+            onChanged: (String value) {
+              setState(() {
+                _description = value;
+              });
+            },
+          ),
+          TextField(
+            decoration: InputDecoration(labelText: 'Product Price'),
+            keyboardType: TextInputType.number,
+            onChanged: (String value) {
+              setState(() {
+                _price = double.parse(value);
+              });
+            },
+          ),
+        ],
+      ),
     );
   }
 }
