@@ -10,12 +10,16 @@ class Products extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Image.asset(products[index]['image']),
-          Text(products[index]['title']),
+          Padding(
+            padding: EdgeInsets.only(top: 5),
+            child: Text(products[index]['title']),
+          ),
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: <Widget>[
               FlatButton(
                 color: Theme.of(context).primaryColor,
+                textColor: Colors.white,
                 child: Text("Details"),
                 onPressed: () => Navigator.pushNamed<bool>(
                       context,
