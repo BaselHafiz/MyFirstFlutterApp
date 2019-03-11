@@ -33,14 +33,15 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-          primarySwatch: Colors.deepOrange,
-          accentColor: Colors.deepPurple,
-          brightness: Brightness.light),
+        primarySwatch: Colors.deepOrange,
+        accentColor: Colors.deepPurple,
+        brightness: Brightness.light,
+        fontFamily: 'Oswald',
+      ),
       home: AuthPage(),
       routes: {
         '/adminPage': (BuildContext context) => ProductsAdminPage(_addProduct),
-        '/productsPage': (BuildContext context) =>
-            ProductsPage(_products),
+        '/productsPage': (BuildContext context) => ProductsPage(_products),
       },
       onGenerateRoute: (RouteSettings settings) {
         final List<String> pathElements = settings.name.split('/');
@@ -58,8 +59,7 @@ class _MyAppState extends State<MyApp> {
       },
       onUnknownRoute: (RouteSettings settings) {
         return MaterialPageRoute(
-            builder: (BuildContext context) =>
-                ProductsPage(_products));
+            builder: (BuildContext context) => ProductsPage(_products));
       },
     );
   }
