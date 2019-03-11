@@ -36,7 +36,6 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.deepOrange,
         accentColor: Colors.deepPurple,
         brightness: Brightness.light,
-        fontFamily: 'Oswald',
       ),
       home: AuthPage(),
       routes: {
