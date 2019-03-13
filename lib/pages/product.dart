@@ -2,34 +2,10 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 class ProductPage extends StatelessWidget {
-  final String imageUrl;
-  final String title;
+  final String image, title, description;
+  final double price;
 
-  ProductPage(this.title, this.imageUrl);
-
-  _showWarningDialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Are you sure?"),
-            content: Text('This action can\'t be undone'),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("Discard"),
-                onPressed: () =>
-                    Navigator.pop(context), // close the alert dialog
-              ),
-              FlatButton(
-                  child: Text("Continue"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pop(context, true);
-                  }),
-            ],
-          );
-        });
-  }
+  ProductPage(this.title, this.image, this.description, this.price);
 
   @override
   Widget build(BuildContext context) {
@@ -45,16 +21,55 @@ class ProductPage extends StatelessWidget {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Image.asset(imageUrl),
+            Image.asset(image),
             Container(
               padding: EdgeInsets.all(10),
-              child: Text(title),
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'cambria',
+                ),
+              ),
             ),
-            RaisedButton(
-              color: Theme.of(context).primaryColor,
-              child: Text("Delete"),
-              onPressed: () => _showWarningDialog(context),
-            )
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'Union Square, San Fransisco |',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'cambria',
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                    child: Text(
+                      '\$ ${price.toString()}',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'cambria',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Text(
+              description,
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'cambria',
+              ),
+            ),
           ],
         ),
       ),
