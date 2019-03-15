@@ -40,7 +40,7 @@ class ProductsAdminPage extends StatelessWidget {
             tabs: <Widget>[
               Tab(
                 icon: Icon(Icons.create),
-                text: 'Create Prroduct',
+                text: 'Create Product',
               ),
               Tab(
                 icon: Icon(Icons.list),
@@ -50,7 +50,10 @@ class ProductsAdminPage extends StatelessWidget {
           ),
         ),
         body: TabBarView(
-          children: <Widget>[ProductCreatePage(addProduct), ProductListPage()],
+          children: <Widget>[
+            ProductCreatePage(addProduct),
+            ProductListPage(),
+          ],
         ),
       ),
     );

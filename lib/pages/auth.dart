@@ -61,11 +61,16 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
+    final double deviceWidth = MediaQuery.of(context).size.width;
+    final double targetWidth = deviceWidth > 550 ? 700 : deviceWidth * 0.95;
+
     return Scaffold(
         appBar: AppBar(
           title: Text('Login'),
         ),
         body: Container(
+          width: targetWidth,
+          alignment: Alignment.center,
           decoration: BoxDecoration(
             image: _buildDecorationImage(),
           ),
