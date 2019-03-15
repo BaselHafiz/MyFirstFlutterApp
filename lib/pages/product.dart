@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import '../widgets/title_default.dart';
+import 'package:my_first_flutter_app/widgets/products/title_default.dart';
 
 class ProductPage extends StatelessWidget {
   final String image, title, description;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'price_tag.dart';
-import '../title_default.dart';
+import 'package:my_first_flutter_app/widgets/products/title_default.dart';
 
 import 'address_tag.dart';
 

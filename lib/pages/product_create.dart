@@ -17,55 +17,67 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
   String _description = '';
   double _price = 0.0;
 
+  Widget _buildTitleTextField() {
+    return TextField(
+      decoration: InputDecoration(labelText: 'Product Title'),
+      onChanged: (String value) {
+        setState(() {
+          _title = value;
+        });
+      },
+    );
+  }
+
+  Widget _buildDescriptionTextField() {
+    return TextField(
+      decoration: InputDecoration(labelText: 'Product Description'),
+      maxLines: 3,
+      onChanged: (String value) {
+        setState(() {
+          _description = value;
+        });
+      },
+    );
+  }
+
+  Widget _buildPriceTextField() {
+    return TextField(
+      decoration: InputDecoration(labelText: 'Product Price'),
+      keyboardType: TextInputType.number,
+      onChanged: (String value) {
+        setState(() {
+          _price = double.parse(value);
+        });
+      },
+    );
+  }
+
+  void _submitForm() {
+    _products = {
+      'title': _title,
+      'description': _description,
+      'price': _price,
+      'image': 'assets/food.jpg'
+    };
+    widget.addProduct(_products);
+    Navigator.pushReplacementNamed(context, '/productsPage');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(15),
       child: ListView(
         children: <Widget>[
-          TextField(
-            decoration: InputDecoration(labelText: 'Product Title'),
-            onChanged: (String value) {
-              setState(() {
-                _title = value;
-              });
-            },
-          ),
-          TextField(
-            decoration: InputDecoration(labelText: 'Product Description'),
-            maxLines: 3,
-            onChanged: (String value) {
-              setState(() {
-                _description = value;
-              });
-            },
-          ),
-          TextField(
-            decoration: InputDecoration(labelText: 'Product Price'),
-            keyboardType: TextInputType.number,
-            onChanged: (String value) {
-              setState(() {
-                _price = double.parse(value);
-              });
-            },
-          ),
-          SizedBox(
-            height: 30,
-          ),
+          _buildTitleTextField(),
+          _buildDescriptionTextField(),
+          _buildPriceTextField(),
+          SizedBox(height: 30),
           RaisedButton(
             color: Theme.of(context).primaryColor,
             textColor: Colors.white,
             child: Text('Save'),
-            onPressed: () {
-              _products = {
-                'title': _title,
-                'description': _description,
-                'price': _price,
-                'image': 'assets/food.jpg'
-              };
-              widget.addProduct(_products);
-              Navigator.pushReplacementNamed(context, '/productsPage');
-            },
+            onPressed: _submitForm,
           ),
         ],
       ),
