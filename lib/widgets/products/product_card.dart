@@ -11,44 +11,52 @@ class ProductCard extends StatelessWidget {
 
   ProductCard(this.product, this.productIndex);
 
+  Widget _buildTitlePriceRow(){
+    return Container(
+      padding: EdgeInsets.only(top: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          TitleDefault(product['title']),
+          SizedBox(
+            width: 20,
+          ),
+          PriceTag(product['price'].toString()),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRowForIconButtons(BuildContext context){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        IconButton(
+          icon: Icon(Icons.info),
+          color: Theme.of(context).accentColor,
+          onPressed: () => Navigator.pushNamed<bool>(
+            context,
+            '/product/' + productIndex.toString(),
+          ),
+        ),
+        IconButton(
+          icon: Icon(Icons.favorite_border),
+          color: Colors.red,
+          onPressed: () {},
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
       child: Column(
         children: <Widget>[
           Image.asset(product['image']),
-          Container(
-            padding: EdgeInsets.only(top: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                TitleDefault(product['title']),
-                SizedBox(
-                  width: 20,
-                ),
-                PriceTag(product['price'].toString()),
-              ],
-            ),
-          ),
+          _buildTitlePriceRow(),
           AddressTag('Union Square, San Fransisco'),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.info),
-                color: Theme.of(context).accentColor,
-                onPressed: () => Navigator.pushNamed<bool>(
-                      context,
-                      '/product/' + productIndex.toString(),
-                    ),
-              ),
-              IconButton(
-                icon: Icon(Icons.favorite_border),
-                color: Colors.red,
-                onPressed: () {},
-              ),
-            ],
-          ),
+          _buildRowForIconButtons(context),
         ],
       ),
     );
