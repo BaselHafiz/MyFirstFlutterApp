@@ -70,10 +70,10 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
     final double targetPadding = deviceWidth - targetWidth;
 
     return Container(
-
       margin: EdgeInsets.all(15),
       child: ListView(
-        padding: EdgeInsets.symmetric(horizontal: targetPadding / 2, vertical: 10),
+        padding:
+            EdgeInsets.symmetric(horizontal: targetPadding / 2, vertical: 10),
         children: <Widget>[
           _buildTitleTextField(),
           _buildDescriptionTextField(),
@@ -84,6 +84,15 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
             textColor: Colors.white,
             child: Text('Save'),
             onPressed: _submitForm,
+          ),
+          SizedBox(height: 30),
+          GestureDetector(
+            onTap: () => print('Simple Listener'),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 100, vertical: 10),
+              color: Colors.pinkAccent,
+              child: Text('GestureDetector  Widget'),
+            ),
           ),
         ],
       ),
