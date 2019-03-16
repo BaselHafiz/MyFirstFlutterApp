@@ -20,6 +20,13 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
 
   Widget _buildTitleTextField() {
     return TextFormField(
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Title is required';
+        } else if (value.length < 5) {
+          return 'Title should be 5+ characters';
+        }
+      },
       decoration: InputDecoration(labelText: 'Product Title'),
       onSaved: (String value) {
         setState(() {
@@ -31,6 +38,13 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
 
   Widget _buildDescriptionTextField() {
     return TextFormField(
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Description is required';
+        } else if (value.length < 10) {
+          return 'Description should be 10+ characters';
+        }
+      },
       decoration: InputDecoration(labelText: 'Product Description'),
       maxLines: 3,
       onSaved: (String value) {
@@ -43,11 +57,23 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
 
   Widget _buildPriceTextField() {
     return TextFormField(
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Price is required';
+        } else if (!RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value)) {
+          return 'Price should be a number';
+        } else if (double.parse(value) < 50) {
+          return 'Price should be \$ 50+';
+        }
+      },
       decoration: InputDecoration(labelText: 'Product Price'),
       keyboardType: TextInputType.number,
       onSaved: (String value) {
         setState(() {
-          _price = double.parse(value);
+          if (value.isNotEmpty &&
+              RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value)) {
+            _price = double.parse(value);
+          }
         });
       },
     );
@@ -55,6 +81,9 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
 
   void _submitForm() {
     _formKey.currentState.save();
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
     _products = {
       'title': _title,
       'description': _description,
@@ -88,15 +117,6 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
               textColor: Colors.white,
               child: Text('Save'),
               onPressed: _submitForm,
-            ),
-            SizedBox(height: 30),
-            GestureDetector(
-              onTap: () => print('Simple Listener'),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 100, vertical: 10),
-                color: Colors.pinkAccent,
-                child: Text('GestureDetector  Widget'),
-              ),
             ),
           ],
         ),
