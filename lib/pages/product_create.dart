@@ -60,9 +60,9 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
       validator: (String value) {
         if (value.isEmpty) {
           return 'Price is required';
-        } else if (!RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value)) {
+        } else if (!RegExp(r'^(?:[1-9]\d*|0)?(?:[.,]\d+)?$').hasMatch(value)) {
           return 'Price should be a number';
-        } else if (double.parse(value) < 50) {
+        } else if (double.parse(value.replaceFirst(RegExp(r','), '.')) < 50) {
           return 'Price should be \$ 50+';
         }
       },
@@ -71,8 +71,8 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
       onSaved: (String value) {
         setState(() {
           if (value.isNotEmpty &&
-              RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value)) {
-            _price = double.parse(value);
+              RegExp(r'^(?:[1-9]\d*|0)?(?:[.,]\d+)?$').hasMatch(value)) {
+            _price = double.parse(value.replaceFirst(RegExp(r','), '.'));
           }
         });
       },
@@ -100,25 +100,30 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
     final double targetWidth = deviceWidth > 550 ? 650 : deviceWidth * 0.98;
     final double targetPadding = deviceWidth - targetWidth;
 
-    return Container(
-      margin: EdgeInsets.all(15),
-      child: Form(
-        key: _formKey,
-        child: ListView(
-          padding:
-              EdgeInsets.symmetric(horizontal: targetPadding / 2, vertical: 10),
-          children: <Widget>[
-            _buildTitleTextField(),
-            _buildDescriptionTextField(),
-            _buildPriceTextField(),
-            SizedBox(height: 30),
-            RaisedButton(
-              color: Theme.of(context).primaryColor,
-              textColor: Colors.white,
-              child: Text('Save'),
-              onPressed: _submitForm,
-            ),
-          ],
+    return GestureDetector(
+      onTap: (){
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Container(
+        margin: EdgeInsets.all(15),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: EdgeInsets.symmetric(
+                horizontal: targetPadding / 2, vertical: 10),
+            children: <Widget>[
+              _buildTitleTextField(),
+              _buildDescriptionTextField(),
+              _buildPriceTextField(),
+              SizedBox(height: 30),
+              RaisedButton(
+                color: Theme.of(context).primaryColor,
+                textColor: Colors.white,
+                child: Text('Save'),
+                onPressed: _submitForm,
+              ),
+            ],
+          ),
         ),
       ),
     );
