@@ -12,11 +12,14 @@ class ProductCreatePage extends StatefulWidget {
 }
 
 class _ProductCreatePageState extends State<ProductCreatePage> {
-  Map<String, dynamic> _products = Map();
-  String _title = '';
-  String _description = '';
-  double _price = 0.0;
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  Map<String, dynamic> _formData = {
+    'title': null,
+    'description': null,
+    'price': null,
+    'image': 'assets/food.jpg'
+  };
+
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   Widget _buildTitleTextField() {
     return TextFormField(
@@ -29,9 +32,7 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
       },
       decoration: InputDecoration(labelText: 'Product Title'),
       onSaved: (String value) {
-        setState(() {
-          _title = value;
-        });
+          _formData['title'] = value;
       },
     );
   }
@@ -48,9 +49,7 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
       decoration: InputDecoration(labelText: 'Product Description'),
       maxLines: 3,
       onSaved: (String value) {
-        setState(() {
-          _description = value;
-        });
+          _formData['description'] = value;
       },
     );
   }
@@ -69,12 +68,10 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
       decoration: InputDecoration(labelText: 'Product Price'),
       keyboardType: TextInputType.number,
       onSaved: (String value) {
-        setState(() {
           if (value.isNotEmpty &&
               RegExp(r'^(?:[1-9]\d*|0)?(?:[.,]\d+)?$').hasMatch(value)) {
-            _price = double.parse(value.replaceFirst(RegExp(r','), '.'));
+            _formData['price']  = double.parse(value.replaceFirst(RegExp(r','), '.'));
           }
-        });
       },
     );
   }
@@ -84,13 +81,8 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
     if (!_formKey.currentState.validate()) {
       return;
     }
-    _products = {
-      'title': _title,
-      'description': _description,
-      'price': _price,
-      'image': 'assets/food.jpg'
-    };
-    widget.addProduct(_products);
+
+    widget.addProduct(_formData);
     Navigator.pushReplacementNamed(context, '/productsPage');
   }
 
@@ -101,7 +93,7 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
     final double targetPadding = deviceWidth - targetWidth;
 
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
       },
       child: Container(
