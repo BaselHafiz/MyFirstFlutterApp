@@ -8,9 +8,14 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  String _email = '';
-  String _password = '';
-  bool _acceptTerms = false;
+  Map<String, dynamic> _formData = {
+    'email': null,
+    'password': null,
+    'acceptTerms': false
+  };
+
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   DecorationImage _buildDecorationImage() {
     return DecorationImage(
@@ -23,41 +28,80 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   Widget _buildEmailTextField() {
-    return TextField(
+    return TextFormField(
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Email is required';
+        } else if (value.length < 5) {
+          return 'Email should be 5+ characters';
+        }
+      },
+      keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(labelText: 'Email'),
-      onChanged: (String value) {
+      onSaved: (String value) {
         setState(() {
-          _email = value;
+          _formData['email'] = value;
         });
       },
     );
   }
 
   Widget _buildPasswordTextField() {
-    return TextField(
+    return TextFormField(
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Password is required';
+        } else if (value.length < 5) {
+          return 'Password should be 5+ characters';
+        }
+      },
+      obscureText: true,
+      keyboardType: TextInputType.text,
       decoration: InputDecoration(labelText: 'Password'),
-      onChanged: (String value) {
+      onSaved: (String value) {
         setState(() {
-          _password = value;
+          _formData['password'] = value;
         });
       },
+    );
+  }
+
+  Widget _buildLoginButton(BuildContext context) {
+    return RaisedButton(
+      child: Text("Login"),
+      textColor: Colors.white,
+      color: Theme.of(context).primaryColor,
+      onPressed: _submitForm,
     );
   }
 
   Widget _buildAcceptSwitch() {
     return SwitchListTile(
-      value: _acceptTerms,
+      value: _formData['acceptTerms'],
       title: Text('Accept Terms'),
       onChanged: (bool value) {
         setState(() {
-          _acceptTerms = value;
+          _formData['acceptTerms'] = value;
         });
       },
     );
   }
 
-  void _submitForm() =>
+  void _submitForm() {
+    _formKey.currentState.save();
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
+
+    if (_formData['acceptTerms']) {
       Navigator.pushReplacementNamed(context, '/productsPage');
+    } else {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text('Please Accept Terms'),
+        duration: Duration(seconds: 3),
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,35 +109,34 @@ class _AuthPageState extends State<AuthPage> {
     final double targetWidth = deviceWidth > 550 ? 700 : deviceWidth * 0.98;
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Login'),
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: Text('Login'),
+      ),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
+        child: Form(
+          key: _formKey,
+          child: Container(
+            width: targetWidth,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(image: _buildDecorationImage()),
+            padding: EdgeInsets.all(15),
+            child: ListView(
+              children: <Widget>[
+                _buildEmailTextField(),
+                _buildPasswordTextField(),
+                SizedBox(height: 20),
+                _buildAcceptSwitch(),
+                SizedBox(height: 20),
+                _buildLoginButton(context),
+              ],
+            ),
+          ),
         ),
-        body: Container(
-          width: targetWidth,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            image: _buildDecorationImage(),
-          ),
-          padding: EdgeInsets.all(15),
-          child: ListView(
-            children: <Widget>[
-              _buildEmailTextField(),
-              _buildPasswordTextField(),
-              SizedBox(
-                height: 20,
-              ),
-              _buildAcceptSwitch(),
-              SizedBox(
-                height: 20,
-              ),
-              RaisedButton(
-                child: Text("Login"),
-                textColor: Colors.white,
-                color: Theme.of(context).primaryColor,
-                onPressed: _submitForm,
-              ),
-            ],
-          ),
-        ));
+      ),
+    );
   }
 }
