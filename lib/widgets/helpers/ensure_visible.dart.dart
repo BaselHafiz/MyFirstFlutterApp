@@ -1,7 +1,10 @@
 /*
 1. Ensures that "TextFormFields" are visible when focused in Flutter
+
 2. How to make sure a TextField or TextFormField is visible in the viewport
 when it has the focus without being covered by the keyboard?
+
+3. This solution only works when the TextFields are located in a Scrollable area.
  */
 
 import 'dart:async';
