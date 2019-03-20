@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/helpers/ensure_visible.dart.dart';
+
 class ProductEditPage extends StatefulWidget {
   final Function addProduct, updateProduct;
   final Map<String, dynamic> product;
   final int productIndex;
 
-  ProductEditPage({this.addProduct, this.updateProduct, this.product, this.productIndex});
+  ProductEditPage(
+      {this.addProduct, this.updateProduct, this.product, this.productIndex});
 
   @override
   State<StatefulWidget> createState() {
@@ -21,65 +24,82 @@ class _ProductEditPageState extends State<ProductEditPage> {
     'image': 'assets/food.jpg'
   };
 
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _titleFocusNode = FocusNode();
+  final _descriptionFocusNode = FocusNode();
+  final _priceFocusNode = FocusNode();
 
   Widget _buildTitleTextField() {
-    return TextFormField(
-      validator: (String value) {
-        if (value.isEmpty) {
-          return 'Title is required';
-        } else if (value.length < 5) {
-          return 'Title should be 5+ characters';
-        }
-      },
-      initialValue: widget.product == null ? '' : widget.product['title'],
-      decoration: InputDecoration(labelText: 'Product Title'),
-      onSaved: (String value) {
-        _formData['title'] = value;
-      },
+    return EnsureVisibleWhenFocused(
+      focusNode: _titleFocusNode,
+      child: TextFormField(
+        focusNode: _titleFocusNode,
+        validator: (String value) {
+          if (value.isEmpty) {
+            return 'Title is required';
+          } else if (value.length < 5) {
+            return 'Title should be 5+ characters';
+          }
+        },
+        initialValue: widget.product == null ? '' : widget.product['title'],
+        decoration: InputDecoration(labelText: 'Product Title'),
+        onSaved: (String value) {
+          _formData['title'] = value;
+        },
+      ),
     );
   }
 
   Widget _buildDescriptionTextField() {
-    return TextFormField(
-      validator: (String value) {
-        if (value.isEmpty) {
-          return 'Description is required';
-        } else if (value.length < 10) {
-          return 'Description should be 10+ characters';
-        }
-      },
-      initialValue: widget.product == null ? '' : widget.product['description'],
-      decoration: InputDecoration(labelText: 'Product Description'),
-      maxLines: 3,
-      onSaved: (String value) {
-        _formData['description'] = value;
-      },
+    return EnsureVisibleWhenFocused(
+      focusNode: _descriptionFocusNode,
+      child: TextFormField(
+        focusNode: _descriptionFocusNode,
+        validator: (String value) {
+          if (value.isEmpty) {
+            return 'Description is required';
+          } else if (value.length < 10) {
+            return 'Description should be 10+ characters';
+          }
+        },
+        initialValue:
+            widget.product == null ? '' : widget.product['description'],
+        decoration: InputDecoration(labelText: 'Product Description'),
+        maxLines: 3,
+        onSaved: (String value) {
+          _formData['description'] = value;
+        },
+      ),
     );
   }
 
   Widget _buildPriceTextField() {
-    return TextFormField(
-      validator: (String value) {
-        if (value.isEmpty) {
-          return 'Price is required';
-        } else if (!RegExp(r'^(?:[1-9]\d*|0)?(?:[.,]\d+)?$').hasMatch(value)) {
-          return 'Price should be a number';
-        } else if (double.parse(value.replaceFirst(RegExp(r','), '.')) < 50) {
-          return 'Price should be \$ 50+';
-        }
-      },
-      initialValue:
-          widget.product == null ? '' : widget.product['price'].toString(),
-      decoration: InputDecoration(labelText: 'Product Price'),
-      keyboardType: TextInputType.number,
-      onSaved: (String value) {
-        if (value.isNotEmpty &&
-            RegExp(r'^(?:[1-9]\d*|0)?(?:[.,]\d+)?$').hasMatch(value)) {
-          _formData['price'] =
-              double.parse(value.replaceFirst(RegExp(r','), '.'));
-        }
-      },
+    return EnsureVisibleWhenFocused(
+      focusNode: _priceFocusNode,
+      child: TextFormField(
+        focusNode: _priceFocusNode,
+        validator: (String value) {
+          if (value.isEmpty) {
+            return 'Price is required';
+          } else if (!RegExp(r'^(?:[1-9]\d*|0)?(?:[.,]\d+)?$')
+              .hasMatch(value)) {
+            return 'Price should be a number';
+          } else if (double.parse(value.replaceFirst(RegExp(r','), '.')) < 50) {
+            return 'Price should be \$ 50+';
+          }
+        },
+        initialValue:
+            widget.product == null ? '' : widget.product['price'].toString(),
+        decoration: InputDecoration(labelText: 'Product Price'),
+        keyboardType: TextInputType.number,
+        onSaved: (String value) {
+          if (value.isNotEmpty &&
+              RegExp(r'^(?:[1-9]\d*|0)?(?:[.,]\d+)?$').hasMatch(value)) {
+            _formData['price'] =
+                double.parse(value.replaceFirst(RegExp(r','), '.'));
+          }
+        },
+      ),
     );
   }
 
@@ -89,12 +109,11 @@ class _ProductEditPageState extends State<ProductEditPage> {
       return;
     }
 
-    if(widget.product == null){
+    if (widget.product == null) {
       widget.addProduct(_formData);
     } else {
       widget.updateProduct(widget.productIndex, _formData);
     }
-
 
     Navigator.pushReplacementNamed(context, '/productsPage');
   }
