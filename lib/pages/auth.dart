@@ -28,12 +28,14 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   Widget _buildEmailTextField() {
+    //
     return TextFormField(
       validator: (String value) {
         if (value.isEmpty) {
           return 'Email is required';
-        } else if (value.length < 5) {
-          return 'Email should be 5+ characters';
+        } else if (!RegExp(r'^\w+[\w-\.]*\@\w+((-\w+)|(\w*))\.[a-z]{2,3}$')
+            .hasMatch(value)) {
+          return 'Email isn\'t correct';
         }
       },
       keyboardType: TextInputType.emailAddress,
