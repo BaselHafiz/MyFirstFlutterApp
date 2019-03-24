@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../widgets/helpers/ensure_visible.dart.dart';
 import '../models/product.dart';
+import '../scoped_models/products.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class ProductEditPage extends StatefulWidget {
   final Function addProduct, updateProduct;
@@ -103,20 +105,33 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
   }
 
-  void _submitForm() {
+  Widget _buildSubmitButton() {
+    return ScopedModelDescendant<ProductsModel>(
+      builder: (BuildContext context, Widget child, ProductsModel model) {
+        return RaisedButton(
+          color: Theme.of(context).primaryColor,
+          textColor: Colors.white,
+          child: Text('Save'),
+          onPressed: () => _submitForm(model.addProduct, model.updateProduct),
+        );
+      },
+    );
+  }
+
+  void _submitForm(Function addProduct, Function updateProduct) {
     _formKey.currentState.save();
     if (!_formKey.currentState.validate()) {
       return;
     }
 
     if (widget.product == null) {
-      widget.addProduct(Product(
+      addProduct(Product(
           title: _formData['title'],
           description: _formData['description'],
           image: _formData['image'],
           price: _formData['price']));
     } else {
-      widget.updateProduct(
+      updateProduct(
           widget.productIndex,
           Product(
               title: _formData['title'],
@@ -149,12 +164,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
               _buildDescriptionTextField(),
               _buildPriceTextField(),
               SizedBox(height: 30),
-              RaisedButton(
-                color: Theme.of(context).primaryColor,
-                textColor: Colors.white,
-                child: Text('Save'),
-                onPressed: _submitForm,
-              ),
+              _buildSubmitButton(),
             ],
           ),
         ),
