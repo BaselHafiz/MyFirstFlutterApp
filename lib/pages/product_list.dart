@@ -1,39 +1,34 @@
 import 'package:flutter/material.dart';
 
 import 'product_edit.dart';
-import '../models/product.dart';
+import '../scoped_models/products.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class ProductListPage extends StatelessWidget {
-  final List<Product> _products;
-  final Function updateProduct, deleteProduct;
-
-  ProductListPage(this._products, this.updateProduct, this.deleteProduct);
-
-  Widget _buildEditButton(BuildContext context, int index) {
+  Widget _buildEditButton(
+      BuildContext context, int index, ProductsModel model) {
     return IconButton(
       icon: Icon(Icons.edit),
       onPressed: () {
+        model.selectProduct(index);
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (BuildContext context) {
-          return ProductEditPage(
-            product: _products[index],
-            updateProduct: updateProduct,
-            productIndex: index,
-          );
+          return ProductEditPage();
         }));
       },
     );
   }
 
-  Widget _buildProductList() {
+  Widget _buildProductList(ProductsModel model) {
     return ListView.builder(
         itemBuilder: (BuildContext context, int index) {
           return Dismissible(
-            key: Key(_products[index].title),
+            key: Key(model.products[index].title),
             onDismissed: (DismissDirection direction) {
               if (direction == DismissDirection.endToStart ||
                   direction == DismissDirection.startToEnd) {
-                deleteProduct(index);
+                model.selectProduct(index);
+                model.deleteProduct();
               }
             },
             background: Container(color: Colors.deepOrange),
@@ -41,25 +36,30 @@ class ProductListPage extends StatelessWidget {
               children: <Widget>[
                 ListTile(
                   leading: CircleAvatar(
-                      backgroundImage: AssetImage(_products[index].image)),
-                  title: Text(_products[index].title),
-                  subtitle: Text('\$ ${_products[index].price.toString()}'),
-                  trailing: _buildEditButton(context, index),
+                      backgroundImage: AssetImage(model.products[index].image)),
+                  title: Text(model.products[index].title),
+                  subtitle:
+                      Text('\$ ${model.products[index].price.toString()}'),
+                  trailing: _buildEditButton(context, index, model),
                 ),
                 Divider(),
               ],
             ),
           );
         },
-        itemCount: _products.length);
+        itemCount: model.products.length);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_products.length > 0) {
-      return _buildProductList();
-    } else {
-      return Center(child: Text("No products found, please add some"));
-    }
+    return ScopedModelDescendant<ProductsModel>(
+      builder: (BuildContext context, Widget child, ProductsModel model) {
+        if (model.products.length > 0) {
+          return _buildProductList(model);
+        } else {
+          return Center(child: Text("No products found, please add some"));
+        }
+      },
+    );
   }
 }
