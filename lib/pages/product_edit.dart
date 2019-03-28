@@ -83,8 +83,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
             return 'Price should be \$ 50+';
           }
         },
-        initialValue:
-            product == null ? '' : product.price.toString(),
+        initialValue: product == null ? '' : product.price.toString(),
         decoration: InputDecoration(labelText: 'Product Price'),
         keyboardType: TextInputType.number,
         onSaved: (String value) {
@@ -105,13 +104,15 @@ class _ProductEditPageState extends State<ProductEditPage> {
           color: Theme.of(context).primaryColor,
           textColor: Colors.white,
           child: Text('Save'),
-          onPressed: () => _submitForm(model.addProduct, model.updateProduct, model.selectedProductIndex),
+          onPressed: () => _submitForm(model.addProduct, model.updateProduct,
+              model.selectedProductIndex),
         );
       },
     );
   }
 
-  void _submitForm(Function addProduct, Function updateProduct, int selectedProductIndex) {
+  void _submitForm(
+      Function addProduct, Function updateProduct, int selectedProductIndex) {
     _formKey.currentState.save();
     if (!_formKey.currentState.validate()) {
       return;
@@ -124,12 +125,11 @@ class _ProductEditPageState extends State<ProductEditPage> {
           image: _formData['image'],
           price: _formData['price']));
     } else {
-      updateProduct(
-          Product(
-              title: _formData['title'],
-              description: _formData['description'],
-              image: _formData['image'],
-              price: _formData['price']));
+      updateProduct(Product(
+          title: _formData['title'],
+          description: _formData['description'],
+          image: _formData['image'],
+          price: _formData['price']));
     }
 
     Navigator.pushReplacementNamed(context, '/productsPage');
@@ -170,7 +170,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<ProductsModel>(
       builder: (BuildContext context, Widget child, ProductsModel model) {
-        final Widget pageContent = _buildPageContent(context, model.selectedProduct);
+        final Widget pageContent =
+            _buildPageContent(context, model.selectedProduct);
         return model.selectedProductIndex == null
             ? pageContent
             : Scaffold(
