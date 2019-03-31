@@ -36,10 +36,10 @@ class ProductListPage extends StatelessWidget {
               children: <Widget>[
                 ListTile(
                   leading: CircleAvatar(
-                      backgroundImage: AssetImage(model.products[index].image)),
-                  title: Text(model.products[index].title),
+                      backgroundImage: AssetImage(model.allProducts[index].image)),
+                  title: Text(model.allProducts[index].title),
                   subtitle:
-                      Text('\$ ${model.products[index].price.toString()}'),
+                      Text('\$ ${model.allProducts[index].price.toString()}'),
                   trailing: _buildEditButton(context, index, model),
                 ),
                 Divider(),
@@ -54,7 +54,7 @@ class ProductListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
-        if (model.products.length > 0) {
+        if (model.allProducts.length > 0) {
           return _buildProductList(model);
         } else {
           return Center(child: Text("No products found, please add some"));

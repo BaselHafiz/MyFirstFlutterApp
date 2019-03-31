@@ -119,17 +119,17 @@ class _ProductEditPageState extends State<ProductEditPage> {
     }
 
     if (selectedProductIndex == null) {
-      addProduct(Product(
-          title: _formData['title'],
-          description: _formData['description'],
-          image: _formData['image'],
-          price: _formData['price']));
+      addProduct(
+          _formData['title'],
+          _formData['description'],
+          _formData['price'],
+          _formData['image']);
     } else {
-      updateProduct(Product(
-          title: _formData['title'],
-          description: _formData['description'],
-          image: _formData['image'],
-          price: _formData['price']));
+      updateProduct(
+          _formData['title'],
+          _formData['description'],
+          _formData['price'],
+          _formData['image']);
     }
 
     Navigator.pushReplacementNamed(context, '/productsPage');
