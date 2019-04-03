@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'dart:async';
 import '../widgets/helpers/ensure_visible.dart.dart';
 import '../models/product.dart';
 import '../scoped_models/main.dart';
@@ -105,34 +105,30 @@ class _ProductEditPageState extends State<ProductEditPage> {
           textColor: Colors.white,
           child: Text('Save'),
           onPressed: () => _submitForm(model.addProduct, model.updateProduct,
-              model.selectedProductIndex),
+              model.selectProduct, model.selectedProductIndex),
         );
       },
     );
   }
 
   void _submitForm(
-      Function addProduct, Function updateProduct, int selectedProductIndex) {
+      Function addProduct, Function updateProduct, Function setSelectedProduct,
+      [int selectedProductIndex]) {
     _formKey.currentState.save();
     if (!_formKey.currentState.validate()) {
       return;
     }
 
     if (selectedProductIndex == null) {
-      addProduct(
-          _formData['title'],
-          _formData['description'],
-          _formData['price'],
-          _formData['image']);
+      addProduct(_formData['title'], _formData['description'],
+          _formData['price'], _formData['image']);
     } else {
-      updateProduct(
-          _formData['title'],
-          _formData['description'],
-          _formData['price'],
-          _formData['image']);
+      updateProduct(_formData['title'], _formData['description'],
+          _formData['price'], _formData['image']);
     }
 
-    Navigator.pushReplacementNamed(context, '/productsPage');
+    Navigator.pushReplacementNamed(context, '/productsPage')
+        .then((_) => setSelectedProduct(null));
   }
 
   Widget _buildPageContent(BuildContext context, Product product) {
@@ -172,14 +168,23 @@ class _ProductEditPageState extends State<ProductEditPage> {
       builder: (BuildContext context, Widget child, MainModel model) {
         final Widget pageContent =
             _buildPageContent(context, model.selectedProduct);
-        return model.selectedProductIndex == null
-            ? pageContent
-            : Scaffold(
-                appBar: AppBar(
-                  title: Text('Edit Product'),
+
+        return WillPopScope(
+          onWillPop: () {
+            Navigator.pushReplacementNamed(context, '/productsPage').then((_) {
+              model.selectProduct(null);
+            });
+            return Future.value(false);
+          },
+          child: model.selectedProductIndex == null
+              ? pageContent
+              : Scaffold(
+                  appBar: AppBar(
+                    title: Text('Edit Product'),
+                  ),
+                  body: pageContent,
                 ),
-                body: pageContent,
-              );
+        );
       },
     );
   }
