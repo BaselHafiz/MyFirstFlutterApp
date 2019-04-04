@@ -100,13 +100,19 @@ class _ProductEditPageState extends State<ProductEditPage> {
   Widget _buildSubmitButton() {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
-        return RaisedButton(
-          color: Theme.of(context).primaryColor,
-          textColor: Colors.white,
-          child: Text('Save'),
-          onPressed: () => _submitForm(model.addProduct, model.updateProduct,
-              model.selectProduct, model.selectedProductIndex),
-        );
+        return model.isLoading
+            ? Center(child: CircularProgressIndicator())
+            : RaisedButton(
+                color: Theme.of(context).primaryColor,
+                textColor: Colors.white,
+                child: Text('Save'),
+                onPressed: () => _submitForm(
+                      model.addProduct,
+                      model.updateProduct,
+                      model.selectProduct,
+                      model.selectedProductIndex,
+                    ),
+              );
       },
     );
   }
@@ -121,14 +127,15 @@ class _ProductEditPageState extends State<ProductEditPage> {
 
     if (selectedProductIndex == null) {
       addProduct(_formData['title'], _formData['description'],
-          _formData['price'], _formData['image']);
+              _formData['price'], _formData['image'])
+          .then((_) {
+        Navigator.pushReplacementNamed(context, '/productsPage')
+            .then((_) => setSelectedProduct(null));
+      });
     } else {
       updateProduct(_formData['title'], _formData['description'],
           _formData['price'], _formData['image']);
     }
-
-    Navigator.pushReplacementNamed(context, '/productsPage')
-        .then((_) => setSelectedProduct(null));
   }
 
   Widget _buildPageContent(BuildContext context, Product product) {

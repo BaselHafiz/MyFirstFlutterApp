@@ -3,14 +3,18 @@ import '../models/product.dart';
 import '../models/user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async';
 
 class ConnectedProductsModel extends Model {
   int _selProductIndex;
   User _authenticatedUser;
   List<Product> _products = List();
+  bool _isLoading = false;
 
-  void addProduct(
+  Future<Null> addProduct(
       String title, String description, double price, String image) {
+    _isLoading = true;
+    notifyListeners();
     final Map<String, dynamic> productData = {
       'title': title,
       'description': description,
@@ -20,7 +24,7 @@ class ConnectedProductsModel extends Model {
       'userEmail': _authenticatedUser.email
     };
 
-    http
+    return http
         .post('https://my-first-flutter-app-c933e.firebaseio.com/products.json',
             body: json.encode(productData))
         .then((http.Response response) {
@@ -35,6 +39,7 @@ class ConnectedProductsModel extends Model {
           userId: _authenticatedUser.id);
 
       _products.add(newProduct);
+      _isLoading = false;
       notifyListeners();
     });
   }
@@ -77,14 +82,19 @@ class ProductsModel extends ConnectedProductsModel {
   }
 
   void fetchProducts() {
+    _isLoading = true;
+    notifyListeners();
     http
         .get('https://my-first-flutter-app-c933e.firebaseio.com/products.json')
         .then((http.Response response) {
       final List<Product> fetchedProductList = List();
-      final Map<String, dynamic> productListData =
-          json.decode(response.body);
-      productListData
-          .forEach((String productId, dynamic productData) {
+      final Map<String, dynamic> productListData = json.decode(response.body);
+      if (productListData == null) {
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
+      productListData.forEach((String productId, dynamic productData) {
         final Product product = Product(
             id: productId,
             title: productData['title'],
@@ -96,6 +106,7 @@ class ProductsModel extends ConnectedProductsModel {
         fetchedProductList.add(product);
       });
       _products = fetchedProductList;
+      _isLoading = false;
       notifyListeners();
     });
   }
@@ -140,5 +151,11 @@ class ProductsModel extends ConnectedProductsModel {
 
   bool get displayFavoritesOnly {
     return _showFavorites;
+  }
+}
+
+class UtilityModel extends ConnectedProductsModel {
+  bool get isLoading {
+    return _isLoading;
   }
 }
