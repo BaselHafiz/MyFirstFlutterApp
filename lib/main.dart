@@ -7,7 +7,6 @@ import './pages/product.dart';
 import './scoped_models/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
@@ -20,8 +19,9 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    final MainModel mainModel = MainModel();
     return ScopedModel<MainModel>(
-      model: MainModel(),
+      model: mainModel,
       child: MaterialApp(
         theme: ThemeData(
           primarySwatch: Colors.deepOrange,
@@ -32,7 +32,7 @@ class _MyAppState extends State<MyApp> {
         home: AuthPage(),
         routes: {
           '/adminPage': (BuildContext context) => ProductsAdminPage(),
-          '/productsPage': (BuildContext context) => ProductsPage(),
+          '/productsPage': (BuildContext context) => ProductsPage(mainModel),
         },
         onGenerateRoute: (RouteSettings settings) {
           final List<String> pathElements = settings.name.split('/');
@@ -50,7 +50,7 @@ class _MyAppState extends State<MyApp> {
         },
         onUnknownRoute: (RouteSettings settings) {
           return MaterialPageRoute(
-              builder: (BuildContext context) => ProductsPage());
+              builder: (BuildContext context) => ProductsPage(mainModel));
         },
       ),
     );
