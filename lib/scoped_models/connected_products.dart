@@ -1,6 +1,8 @@
 import 'package:scoped_model/scoped_model.dart';
 import '../models/product.dart';
 import '../models/user.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ConnectedProductsModel extends Model {
   int _selProductIndex;
@@ -9,6 +11,14 @@ class ConnectedProductsModel extends Model {
 
   void addProduct(
       String title, String description, double price, String image) {
+    final Map<String, dynamic> productData = {
+      'title': title,
+      'description': description,
+      'image': 'https://farm1.staticflickr.com/925/29200961038_aee56910d2.jpg',
+      'price': price
+    };
+    http.post('https://my-first-flutter-app-c933e.firebaseio.com/products.json',
+        body: json.encode(productData));
     final Product newProduct = Product(
         title: title,
         description: description,
@@ -43,7 +53,7 @@ class ProductsModel extends ConnectedProductsModel {
   }
 
   int get selectedProductIndex {
-      return _selProductIndex;
+    return _selProductIndex;
   }
 
   Product get selectedProduct {
