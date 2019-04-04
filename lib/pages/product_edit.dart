@@ -171,10 +171,10 @@ class _ProductEditPageState extends State<ProductEditPage> {
 
         return WillPopScope(
           onWillPop: () {
-            Navigator.pushReplacementNamed(context, '/productsPage').then((_) {
+            Navigator.pushReplacementNamed(context, '/adminPage').then((_) {
               model.selectProduct(null);
             });
-            return Future.value(false);
+            return Future.value(true);
           },
           child: model.selectedProductIndex == null
               ? pageContent
