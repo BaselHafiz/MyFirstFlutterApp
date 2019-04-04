@@ -41,7 +41,7 @@ class ProductListPage extends StatelessWidget {
                 ListTile(
                   leading: CircleAvatar(
                       backgroundImage:
-                          AssetImage(model.allProducts[index].image)),
+                          NetworkImage(model.allProducts[index].image)),
                   title: Text(model.allProducts[index].title),
                   subtitle:
                       Text('\$ ${model.allProducts[index].price.toString()}'),
@@ -61,8 +61,6 @@ class ProductListPage extends StatelessWidget {
       builder: (BuildContext context, Widget child, MainModel model) {
         if (model.allProducts.length > 0) {
           return _buildProductList(model);
-        } else {
-          return Center(child: Text("No products found, please add some"));
         }
       },
     );
