@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import './product_edit.dart';
 import './product_list.dart';
 import '../scoped_models/main.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class ProductsAdminPage extends StatelessWidget {
   final MainModel mainModel;
@@ -50,7 +51,18 @@ class ProductsAdminPage extends StatelessWidget {
           ),
         ),
         body: TabBarView(
-          children: <Widget>[ProductEditPage(), ProductListPage(mainModel)],
+          children: <Widget>[
+            ProductEditPage(),
+            ScopedModelDescendant<MainModel>(
+              builder: (BuildContext context, Widget child, MainModel model) {
+                if (model.allProducts.length > 0) {
+                  return ProductListPage(mainModel);
+                } else {
+                  return Center(child: Text('No products found !'));
+                }
+              },
+            ),
+          ],
         ),
       ),
     );
