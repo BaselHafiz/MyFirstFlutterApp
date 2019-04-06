@@ -111,17 +111,37 @@ class ProductsModel extends ConnectedProductsModel {
     });
   }
 
-  void updateProduct(
+  Future<Null> updateProduct(
       String title, String description, double price, String image) {
-    final Product updatedProduct = Product(
-        title: title,
-        description: description,
-        price: price,
-        image: image,
-        userEmail: selectedProduct.userEmail,
-        userId: selectedProduct.userId);
-    _products[selectedProductIndex] = updatedProduct;
+    _isLoading = true;
     notifyListeners();
+
+    final Map<String, dynamic> updateData = {
+      'title': title,
+      'description': description,
+      'image': 'https://farm1.staticflickr.com/925/29200961038_aee56910d2.jpg',
+      'price': price,
+      'userId': _authenticatedUser.id,
+      'userEmail': _authenticatedUser.email
+    };
+
+    return http
+        .put(
+            'https://my-first-flutter-app-c933e.firebaseio.com/products/${selectedProduct.id}.json',
+            body: json.encode(updateData))
+        .then((http.Response response) {
+      _isLoading = false;
+      notifyListeners();
+      final Product updatedProduct = Product(
+          id: selectedProduct.id,
+          title: title,
+          description: description,
+          price: price,
+          image: image,
+          userEmail: selectedProduct.userEmail,
+          userId: selectedProduct.userId);
+      _products[selectedProductIndex] = updatedProduct;
+    });
   }
 
   void selectProduct(int index) {
@@ -133,6 +153,7 @@ class ProductsModel extends ConnectedProductsModel {
     final bool isCurrentlyFavorite = selectedProduct.isFavorite;
     final bool newFavoriteStatus = !isCurrentlyFavorite;
     final Product updatedProduct = Product(
+        id: selectedProduct.id,
         title: selectedProduct.title,
         description: selectedProduct.description,
         price: selectedProduct.price,
