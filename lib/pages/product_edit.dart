@@ -125,7 +125,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
       return;
     }
 
-    if (selectedProductIndex == null) {
+    if (selectedProductIndex == -1) {
       addProduct(_formData['title'], _formData['description'],
               _formData['price'], _formData['image'])
           .then((_) {
@@ -187,7 +187,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
             });
             return Future.value(true);
           },
-          child: model.selectedProductIndex == null
+          child: model.selectedProductIndex == -1
               ? pageContent
               : Scaffold(
                   appBar: AppBar(

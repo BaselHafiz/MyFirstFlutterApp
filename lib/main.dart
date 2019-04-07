@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_first_flutter_app/models/product.dart';
 
 import './pages/auth.dart';
 import './pages/products_admin.dart';
@@ -40,10 +41,13 @@ class _MyAppState extends State<MyApp> {
             return null;
           }
           if (pathElements[1] == 'product') {
-            final int index = int.parse(pathElements[2]);
+            final String productId = pathElements[2];
+            final Product product =
+                mainModel.allProducts.firstWhere((Product product) {
+              return product.id == productId;
+            });
             return MaterialPageRoute<bool>(
-              builder: (BuildContext context) =>
-                  ProductPage(index),
+              builder: (BuildContext context) => ProductPage(product),
             );
           }
           return null;

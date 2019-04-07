@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'dart:async';
 
 class ConnectedProductsModel extends Model {
-  int _selProductIndex;
+  String _selProductId;
   User _authenticatedUser;
   List<Product> _products = List();
   bool _isLoading = false;
@@ -65,22 +65,30 @@ class ProductsModel extends ConnectedProductsModel {
     return List.from(_products);
   }
 
-  int get selectedProductIndex {
-    return _selProductIndex;
+  String get selectedProductId {
+    return _selProductId;
   }
 
   Product get selectedProduct {
-    if (selectedProductIndex == null) {
+    if (selectedProductId == null) {
       return null;
     }
-    return _products[selectedProductIndex];
+    return _products.firstWhere((Product product) {
+      return product.id == _selProductId;
+    });
+  }
+
+  int get selectedProductIndex {
+    return _products.indexWhere((Product product) {
+      return product.id == _selProductId;
+    });
   }
 
   void deleteProduct() {
     _isLoading = true;
     final deletedProductId = selectedProduct.id;
     _products.removeAt(selectedProductIndex);
-    _selProductIndex = null;
+    _selProductId = null;
     notifyListeners();
     http
         .delete(
@@ -154,9 +162,11 @@ class ProductsModel extends ConnectedProductsModel {
     });
   }
 
-  void selectProduct(int index) {
-    _selProductIndex = index;
-    notifyListeners();
+  void selectProduct(String productId) {
+    _selProductId = productId;
+   if (productId != null) {
+      notifyListeners();
+    }
   }
 
   void toggleProductFavoriteStatus() {
