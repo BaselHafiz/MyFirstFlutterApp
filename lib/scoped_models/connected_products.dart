@@ -10,52 +10,6 @@ class ConnectedProductsModel extends Model {
   User _authenticatedUser;
   List<Product> _products = List();
   bool _isLoading = false;
-
-  Future<bool> addProduct(
-      String title, String description, double price, String image) async {
-    _isLoading = true;
-    notifyListeners();
-    final Map<String, dynamic> productData = {
-      'title': title,
-      'description': description,
-      'image': 'https://farm1.staticflickr.com/925/29200961038_aee56910d2.jpg',
-      'price': price,
-      'userId': _authenticatedUser.id,
-      'userEmail': _authenticatedUser.email
-    };
-
-    try {
-      final http.Response response = await http.post(
-          'https://my-first-flutter-app-c933e.firebaseio.com/products.json',
-          body: json.encode(productData));
-
-      if (response.statusCode != 200 && response.statusCode != 201) {
-        _isLoading = false;
-        notifyListeners();
-        return false;
-      }
-
-      final Map<String, dynamic> responseData = json.decode(response.body);
-      final Product newProduct = Product(
-          id: responseData['name'],
-          title: title,
-          description: description,
-          price: price,
-          image: image,
-          userEmail: _authenticatedUser.email,
-          userId: _authenticatedUser.id);
-
-      _products.add(newProduct);
-      _isLoading = false;
-      _selProductId = null;
-      notifyListeners();
-      return true;
-    } catch (error) {
-      _isLoading = false;
-      notifyListeners();
-      return false;
-    }
-  }
 }
 
 class UsersModel extends ConnectedProductsModel {
@@ -149,6 +103,52 @@ class ProductsModel extends ConnectedProductsModel {
       notifyListeners();
       return;
     });
+  }
+
+  Future<bool> addProduct(
+      String title, String description, double price, String image) async {
+    _isLoading = true;
+    notifyListeners();
+    final Map<String, dynamic> productData = {
+      'title': title,
+      'description': description,
+      'image': 'https://farm1.staticflickr.com/925/29200961038_aee56910d2.jpg',
+      'price': price,
+      'userId': _authenticatedUser.id,
+      'userEmail': _authenticatedUser.email
+    };
+
+    try {
+      final http.Response response = await http.post(
+          'https://my-first-flutter-app-c933e.firebaseio.com/products.json',
+          body: json.encode(productData));
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      final Product newProduct = Product(
+          id: responseData['name'],
+          title: title,
+          description: description,
+          price: price,
+          image: image,
+          userEmail: _authenticatedUser.email,
+          userId: _authenticatedUser.id);
+
+      _products.add(newProduct);
+      _isLoading = false;
+      _selProductId = null;
+      notifyListeners();
+      return true;
+    } catch (error) {
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
   }
 
   Future<bool> updateProduct(
