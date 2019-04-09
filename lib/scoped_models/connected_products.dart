@@ -112,7 +112,8 @@ class ProductsModel extends ConnectedProductsModel {
     final Map<String, dynamic> productData = {
       'title': title,
       'description': description,
-      'image': 'https://farm1.staticflickr.com/925/29200961038_aee56910d2.jpg',
+      'image':
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Chocolatebrownie.JPG/250px-Chocolatebrownie.JPG',
       'price': price,
       'userId': _authenticatedUser.id,
       'userEmail': _authenticatedUser.email
@@ -159,7 +160,8 @@ class ProductsModel extends ConnectedProductsModel {
     final Map<String, dynamic> updateData = {
       'title': title,
       'description': description,
-      'image': 'https://farm1.staticflickr.com/925/29200961038_aee56910d2.jpg',
+      'image':
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Chocolatebrownie.JPG/250px-Chocolatebrownie.JPG',
       'price': price,
       'userId': _authenticatedUser.id,
       'userEmail': _authenticatedUser.email
