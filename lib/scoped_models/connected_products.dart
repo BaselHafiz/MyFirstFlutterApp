@@ -12,12 +12,6 @@ class ConnectedProductsModel extends Model {
   bool _isLoading = false;
 }
 
-class UsersModel extends ConnectedProductsModel {
-  void login(String email, String password) {
-    _authenticatedUser = User(id: '12345', email: email, password: password);
-  }
-}
-
 class ProductsModel extends ConnectedProductsModel {
   bool _showFavorites = false;
 
@@ -227,5 +221,26 @@ class ProductsModel extends ConnectedProductsModel {
 class UtilityModel extends ConnectedProductsModel {
   bool get isLoading {
     return _isLoading;
+  }
+}
+
+class UsersModel extends ConnectedProductsModel {
+  void login(String email, String password) {
+    _authenticatedUser = User(id: '12345', email: email, password: password);
+  }
+
+  Future<Map<String, dynamic>> signUp(String email, String password) async {
+    final Map<String, dynamic> authData = {
+      'email': email,
+      'password': password,
+      'returnSecureToken': true
+    };
+    final http.Response response = await http.post(
+      'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyApMh-5ZADXFgNGoEQ2UL7Klx7kTqIzhpw',
+      body: json.encode(authData),
+      headers: {'Content-Type': 'application/json'},
+    );
+    print(json.decode(response.body));
+    return {'success': true, 'message': 'Authentication succeeded !'};
   }
 }

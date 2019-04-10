@@ -94,7 +94,7 @@ class _AuthPageState extends State<AuthPage> {
           child: Text("Login"),
           textColor: Colors.white,
           color: Theme.of(context).primaryColor,
-          onPressed: () => _submitForm(model.login),
+          onPressed: () => _submitForm(model.login, model.signUp),
         );
       },
     );
@@ -112,20 +112,35 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  void _submitForm(Function login) {
+  void _submitForm(Function login, Function signUp) async {
     _formKey.currentState.save();
     if (!_formKey.currentState.validate()) {
       return;
     }
 
-    login(_formData['email'], _formData['password']);
-    if (_formData['acceptTerms']) {
-      Navigator.pushReplacementNamed(context, '/productsPage');
+    if (_authMode == AuthMode.Login) {
+      if (_formData['acceptTerms']) {
+        login(_formData['email'], _formData['password']);
+        Navigator.pushReplacementNamed(context, '/productsPage');
+      } else {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text('Please Accept Terms'),
+          duration: Duration(seconds: 3),
+        ));
+      }
     } else {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text('Please Accept Terms'),
-        duration: Duration(seconds: 3),
-      ));
+      if (_formData['acceptTerms']) {
+        final Map<String, dynamic> successInfo =
+            await signUp(_formData['email'], _formData['password']);
+        if (successInfo['success']) {
+          Navigator.pushReplacementNamed(context, '/productsPage');
+        }
+      } else {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text('Please Accept Terms'),
+          duration: Duration(seconds: 3),
+        ));
+      }
     }
   }
 
@@ -154,13 +169,15 @@ class _AuthPageState extends State<AuthPage> {
               children: <Widget>[
                 _buildEmailTextField(),
                 _buildPasswordTextField(),
-                _authMode == AuthMode.SignUp ? _buildPasswordConfirmTextField() : Container(),
+                _authMode == AuthMode.SignUp
+                    ? _buildPasswordConfirmTextField()
+                    : Container(),
                 SizedBox(height: 20),
                 _buildAcceptSwitch(),
                 SizedBox(height: 20),
                 FlatButton(
                   child: Text(
-                      'Switch to ${_authMode == AuthMode.Login ? 'Login' : 'SignUp'}'),
+                      'Switch to ${_authMode == AuthMode.Login ? 'SignUp' : 'Login'}'),
                   onPressed: () {
                     setState(() {
                       _authMode = _authMode == AuthMode.Login
