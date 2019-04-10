@@ -91,7 +91,7 @@ class _AuthPageState extends State<AuthPage> {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
         return RaisedButton(
-          child: Text("Login"),
+          child: Text('${_authMode == AuthMode.Login ? 'Login' : 'Sign Up'}'),
           textColor: Colors.white,
           color: Theme.of(context).primaryColor,
           onPressed: () => _submitForm(model.login, model.signUp),
@@ -134,6 +134,23 @@ class _AuthPageState extends State<AuthPage> {
             await signUp(_formData['email'], _formData['password']);
         if (successInfo['success']) {
           Navigator.pushReplacementNamed(context, '/productsPage');
+        } else {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('An error occurred !'),
+                  content: Text('${successInfo['message']}'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('Ok'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              });
         }
       } else {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -177,7 +194,7 @@ class _AuthPageState extends State<AuthPage> {
                 SizedBox(height: 20),
                 FlatButton(
                   child: Text(
-                      'Switch to ${_authMode == AuthMode.Login ? 'SignUp' : 'Login'}'),
+                      'Switch to ${_authMode == AuthMode.Login ? 'Sign Up' : 'Login'}'),
                   onPressed: () {
                     setState(() {
                       _authMode = _authMode == AuthMode.Login

@@ -230,6 +230,8 @@ class UsersModel extends ConnectedProductsModel {
   }
 
   Future<Map<String, dynamic>> signUp(String email, String password) async {
+    bool hasNoError = false;
+    String message = 'Something went wrong !';
     final Map<String, dynamic> authData = {
       'email': email,
       'password': password,
@@ -240,7 +242,13 @@ class UsersModel extends ConnectedProductsModel {
       body: json.encode(authData),
       headers: {'Content-Type': 'application/json'},
     );
-    print(json.decode(response.body));
-    return {'success': true, 'message': 'Authentication succeeded !'};
+    Map<String, dynamic> responseData = json.decode(response.body);
+    if (responseData.containsKey('idToken')) {
+      hasNoError = true;
+      message = 'Authentication succeeded !';
+    } else if (responseData['error']['message'] == 'EMAIL_EXISTS'){
+      message = 'This email already exists !';
+    }
+    return {'success': hasNoError, 'message': message};
   }
 }
