@@ -90,12 +90,15 @@ class _AuthPageState extends State<AuthPage> {
   Widget _buildLoginButton(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
-        return RaisedButton(
-          child: Text('${_authMode == AuthMode.Login ? 'Login' : 'Sign Up'}'),
-          textColor: Colors.white,
-          color: Theme.of(context).primaryColor,
-          onPressed: () => _submitForm(model.login, model.signUp),
-        );
+        return model.isLoading
+            ? Center(child: CircularProgressIndicator())
+            : RaisedButton(
+                child: Text(
+                    '${_authMode == AuthMode.Login ? 'Login' : 'Sign Up'}'),
+                textColor: Colors.white,
+                color: Theme.of(context).primaryColor,
+                onPressed: () => _submitForm(model.login, model.signUp),
+              );
       },
     );
   }
