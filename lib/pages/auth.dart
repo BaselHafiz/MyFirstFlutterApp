@@ -121,10 +121,31 @@ class _AuthPageState extends State<AuthPage> {
       return;
     }
 
+    Map<String, dynamic> successInfo;
+
     if (_authMode == AuthMode.Login) {
       if (_formData['acceptTerms']) {
-        login(_formData['email'], _formData['password']);
-        Navigator.pushReplacementNamed(context, '/productsPage');
+        successInfo = await login(_formData['email'], _formData['password']);
+        if (successInfo['success']) {
+          Navigator.pushReplacementNamed(context, '/productsPage');
+        } else {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('An error occurred !'),
+                  content: Text('${successInfo['message']}'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('Ok'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              });
+        }
       } else {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text('Please Accept Terms'),
@@ -133,8 +154,7 @@ class _AuthPageState extends State<AuthPage> {
       }
     } else {
       if (_formData['acceptTerms']) {
-        final Map<String, dynamic> successInfo =
-            await signUp(_formData['email'], _formData['password']);
+        successInfo = await signUp(_formData['email'], _formData['password']);
         if (successInfo['success']) {
           Navigator.pushReplacementNamed(context, '/productsPage');
         } else {
