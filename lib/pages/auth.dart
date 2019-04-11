@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../scoped_models/main.dart';
-
-enum AuthMode { SignUp, Login }
+import '../models/auth.dart';
 
 class AuthPage extends StatefulWidget {
   @override
@@ -97,7 +96,7 @@ class _AuthPageState extends State<AuthPage> {
                     '${_authMode == AuthMode.Login ? 'Login' : 'Sign Up'}'),
                 textColor: Colors.white,
                 color: Theme.of(context).primaryColor,
-                onPressed: () => _submitForm(model.login, model.signUp),
+                onPressed: () => _submitForm(model.authenticate),
               );
       },
     );
@@ -115,72 +114,40 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  void _submitForm(Function login, Function signUp) async {
+  void _submitForm(Function authenticate) async {
     _formKey.currentState.save();
     if (!_formKey.currentState.validate()) {
       return;
     }
 
-    Map<String, dynamic> successInfo;
-
-    if (_authMode == AuthMode.Login) {
-      if (_formData['acceptTerms']) {
-        successInfo = await login(_formData['email'], _formData['password']);
-        if (successInfo['success']) {
-          Navigator.pushReplacementNamed(context, '/productsPage');
-        } else {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text('An error occurred !'),
-                  content: Text('${successInfo['message']}'),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text('Ok'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    )
-                  ],
-                );
-              });
-        }
+    if (_formData['acceptTerms']) {
+      final Map<String, dynamic> successInfo = await authenticate(
+          _formData['email'], _formData['password'], _authMode);
+      if (successInfo['success']) {
+        Navigator.pushReplacementNamed(context, '/productsPage');
       } else {
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
-          content: Text('Please Accept Terms'),
-          duration: Duration(seconds: 3),
-        ));
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('An error occurred !'),
+                content: Text('${successInfo['message']}'),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Ok'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
       }
     } else {
-      if (_formData['acceptTerms']) {
-        successInfo = await signUp(_formData['email'], _formData['password']);
-        if (successInfo['success']) {
-          Navigator.pushReplacementNamed(context, '/productsPage');
-        } else {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text('An error occurred !'),
-                  content: Text('${successInfo['message']}'),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text('Ok'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    )
-                  ],
-                );
-              });
-        }
-      } else {
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
-          content: Text('Please Accept Terms'),
-          duration: Duration(seconds: 3),
-        ));
-      }
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text('Please Accept Terms'),
+        duration: Duration(seconds: 3),
+      ));
     }
   }
 
