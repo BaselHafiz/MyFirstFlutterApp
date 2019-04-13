@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import '../models/auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ConnectedProductsModel extends Model {
   String _selProductId;
@@ -227,6 +228,10 @@ class UtilityModel extends ConnectedProductsModel {
 }
 
 class UsersModel extends ConnectedProductsModel {
+  User get user {
+    return _authenticatedUser;
+  }
+
   Future<Map<String, dynamic>> authenticate(String email, String password,
       [AuthMode mode = AuthMode.Login]) async {
     _isLoading = true;
@@ -261,6 +266,11 @@ class UsersModel extends ConnectedProductsModel {
           id: responseData['localId'],
           email: responseData['email'],
           token: responseData['idToken']);
+      final SharedPreferences preferences =
+          await SharedPreferences.getInstance();
+      preferences.setString('token', responseData['idToken']);
+      preferences.setString('userEmail', responseData['email']);
+      preferences.setString('userId', responseData['localId']);
     } else if (responseData['error']['message'] == 'EMAIL_NOT_FOUND') {
       message = 'This email is not found !';
     } else if (responseData['error']['message'] == 'INVALID_PASSWORD') {
@@ -271,5 +281,16 @@ class UsersModel extends ConnectedProductsModel {
     _isLoading = false;
     notifyListeners();
     return {'success': hasNoError, 'message': message};
+  }
+
+  void autoAuthenticate() async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    final String token = preferences.getString('token');
+    if (token != null) {
+      final String userId = preferences.getString('userId');
+      final String userEmail = preferences.getString('userEmail');
+      _authenticatedUser = User(id: userId, email: userEmail, token: token);
+      notifyListeners();
+    }
   }
 }
