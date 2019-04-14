@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../scoped_models/main.dart';
 import '../widgets/products/products.dart';
+import '../widgets/products/logout_list_tile.dart';
 
 class ProductsPage extends StatefulWidget {
   final MainModel mainModel;
@@ -35,7 +36,9 @@ class _ProductsPageState extends State<ProductsPage> {
             onTap: () {
               Navigator.pushReplacementNamed(context, '/adminPage');
             },
-          )
+          ),
+          Divider(height: 5),
+          LogoutListTile(),
         ],
       ),
     );

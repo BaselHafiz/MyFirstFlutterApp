@@ -293,4 +293,12 @@ class UsersModel extends ConnectedProductsModel {
       notifyListeners();
     }
   }
+
+  void logout() async {
+    _authenticatedUser = null;
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.remove('token');
+    preferences.remove('userId');
+    preferences.remove('userEmail');
+  }
 }
