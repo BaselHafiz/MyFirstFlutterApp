@@ -123,9 +123,7 @@ class _AuthPageState extends State<AuthPage> {
     if (_formData['acceptTerms']) {
       final Map<String, dynamic> successInfo = await authenticate(
           _formData['email'], _formData['password'], _authMode);
-      if (successInfo['success']) {
-        Navigator.pushReplacementNamed(context, '/productsPage');
-      } else {
+      if (!successInfo['success']) {
         showDialog(
             context: context,
             builder: (BuildContext context) {

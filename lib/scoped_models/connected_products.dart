@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:async';
 import '../models/auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rxdart/subjects.dart';
 
 class ConnectedProductsModel extends Model {
   String _selProductId;
@@ -228,8 +229,15 @@ class UtilityModel extends ConnectedProductsModel {
 }
 
 class UsersModel extends ConnectedProductsModel {
+  Timer _authTimer;
+  PublishSubject<bool> _userSubject = PublishSubject();
+
   User get user {
     return _authenticatedUser;
+  }
+
+  PublishSubject<bool> get userSubject {
+    return _userSubject;
   }
 
   Future<Map<String, dynamic>> authenticate(String email, String password,
@@ -266,11 +274,17 @@ class UsersModel extends ConnectedProductsModel {
           id: responseData['localId'],
           email: responseData['email'],
           token: responseData['idToken']);
+      setAuthTimeout(int.parse(responseData['expiresIn']));
+      _userSubject.add(true);
+      final DateTime now = DateTime.now();
+      final DateTime expiryTime =
+          now.add(Duration(seconds: int.parse(responseData['expiresIn'])));
       final SharedPreferences preferences =
           await SharedPreferences.getInstance();
       preferences.setString('token', responseData['idToken']);
       preferences.setString('userEmail', responseData['email']);
       preferences.setString('userId', responseData['localId']);
+      preferences.setString('expiryTime', expiryTime.toIso8601String());
     } else if (responseData['error']['message'] == 'EMAIL_NOT_FOUND') {
       message = 'This email is not found !';
     } else if (responseData['error']['message'] == 'INVALID_PASSWORD') {
@@ -286,19 +300,36 @@ class UsersModel extends ConnectedProductsModel {
   void autoAuthenticate() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     final String token = preferences.getString('token');
+    final String expiryTimeString = preferences.getString('expiryTime');
     if (token != null) {
+      final DateTime now = DateTime.now();
+      final DateTime parsedExpiryTime = DateTime.parse(expiryTimeString);
+      if (parsedExpiryTime.isBefore(now)) {
+        _authenticatedUser = null;
+        notifyListeners();
+        return;
+      }
+      final int tokenLifeSpan = parsedExpiryTime.difference(now).inSeconds;
       final String userId = preferences.getString('userId');
       final String userEmail = preferences.getString('userEmail');
       _authenticatedUser = User(id: userId, email: userEmail, token: token);
+      _userSubject.add(true);
+      setAuthTimeout(tokenLifeSpan);
       notifyListeners();
     }
   }
 
   void logout() async {
     _authenticatedUser = null;
+    _authTimer.cancel();
+    _userSubject.add(false);
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.remove('token');
     preferences.remove('userId');
     preferences.remove('userEmail');
+  }
+
+  void setAuthTimeout(int time) {
+    _authTimer = Timer(Duration(seconds: time), logout );
   }
 }

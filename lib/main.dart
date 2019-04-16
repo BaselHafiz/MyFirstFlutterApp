@@ -19,10 +19,16 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final MainModel _mainModel = MainModel();
+  bool _isAuthenticated = false;
 
   @override
   void initState() {
     _mainModel.autoAuthenticate();
+    _mainModel.userSubject.listen((bool isAuthenticated) {
+      setState(() {
+        _isAuthenticated = isAuthenticated;
+      });
+    });
     super.initState();
   }
 
@@ -39,17 +45,18 @@ class _MyAppState extends State<MyApp> {
         ),
 //        home: AuthPage(),
         routes: {
-          '/': (BuildContext context) => ScopedModelDescendant<MainModel>(
-                builder: (BuildContext context, Widget child, MainModel model) {
-                  return model.user == null
-                      ? AuthPage()
-                      : ProductsPage(_mainModel);
-                },
-              ),
-          '/adminPage': (BuildContext context) => ProductsAdminPage(_mainModel),
-          '/productsPage': (BuildContext context) => ProductsPage(_mainModel)
+          '/': (BuildContext context) =>
+              !_isAuthenticated ? AuthPage() : ProductsPage(_mainModel),
+          '/adminPage': (BuildContext context) =>
+              !_isAuthenticated ? AuthPage() : ProductsAdminPage(_mainModel)
         },
         onGenerateRoute: (RouteSettings settings) {
+          if (!_isAuthenticated) {
+            return MaterialPageRoute<bool>(
+              builder: (BuildContext context) => AuthPage(),
+            );
+          }
+
           final List<String> pathElements = settings.name.split('/');
           if (pathElements[0] != '') {
             return null;
@@ -61,7 +68,8 @@ class _MyAppState extends State<MyApp> {
               return product.id == productId;
             });
             return MaterialPageRoute<bool>(
-              builder: (BuildContext context) => ProductPage(product),
+              builder: (BuildContext context) =>
+                  !_isAuthenticated ? AuthPage() : ProductPage(product),
             );
           }
           return null;
