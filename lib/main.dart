@@ -7,8 +7,12 @@ import './pages/products.dart';
 import './pages/product.dart';
 import './scoped_models/main.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:map_view/map_view.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  MapView.setApiKey('AIzaSyBbKsb2PPKoMLl2-BLwIM9oeoXaFJEZQUg');
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
