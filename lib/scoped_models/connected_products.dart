@@ -1,3 +1,4 @@
+import 'package:my_first_flutter_app/models/location_data.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../models/product.dart';
 import '../models/user.dart';
@@ -89,6 +90,10 @@ class ProductsModel extends ConnectedProductsModel {
             description: productData['description'],
             image: productData['image'],
             price: productData['price'],
+            location: LocationData(
+                address: productData['loc_address'],
+                latitude: productData['loc_lat'],
+                longitude: productData['loc_lng']),
             userId: productData['userId'],
             userEmail: productData['userEmail'],
             isFavorite: productData['wishlistUsers'] == null
@@ -111,8 +116,8 @@ class ProductsModel extends ConnectedProductsModel {
     });
   }
 
-  Future<bool> addProduct(
-      String title, String description, double price, String image) async {
+  Future<bool> addProduct(String title, String description, double price,
+      String image, LocationData locData) async {
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> productData = {
@@ -122,7 +127,10 @@ class ProductsModel extends ConnectedProductsModel {
           'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Chocolatebrownie.JPG/250px-Chocolatebrownie.JPG',
       'price': price,
       'userId': _authenticatedUser.id,
-      'userEmail': _authenticatedUser.email
+      'userEmail': _authenticatedUser.email,
+      'loc_lat': locData.latitude,
+      'loc_lng': locData.longitude,
+      'loc_address': locData.address,
     };
 
     try {
@@ -143,6 +151,7 @@ class ProductsModel extends ConnectedProductsModel {
           description: description,
           price: price,
           image: image,
+          location: locData,
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id);
 
