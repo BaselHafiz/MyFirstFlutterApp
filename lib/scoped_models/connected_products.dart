@@ -168,7 +168,7 @@ class ProductsModel extends ConnectedProductsModel {
   }
 
   Future<bool> updateProduct(
-      String title, String description, double price, String image) {
+      String title, String description, double price, String image, LocationData locData) {
     _isLoading = true;
     notifyListeners();
 
@@ -179,7 +179,10 @@ class ProductsModel extends ConnectedProductsModel {
           'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Chocolatebrownie.JPG/250px-Chocolatebrownie.JPG',
       'price': price,
       'userId': _authenticatedUser.id,
-      'userEmail': _authenticatedUser.email
+      'userEmail': _authenticatedUser.email,
+      'loc_lat': locData.latitude,
+      'loc_lng': locData.longitude,
+      'loc_address': locData.address,
     };
 
     return http
@@ -194,6 +197,7 @@ class ProductsModel extends ConnectedProductsModel {
           title: title,
           description: description,
           price: price,
+          location: locData,
           image: image,
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId);
@@ -221,6 +225,7 @@ class ProductsModel extends ConnectedProductsModel {
         title: selectedProduct.title,
         description: selectedProduct.description,
         price: selectedProduct.price,
+        location: selectedProduct.location,
         image: selectedProduct.image,
         userId: selectedProduct.userId,
         userEmail: selectedProduct.userEmail,
@@ -244,6 +249,7 @@ class ProductsModel extends ConnectedProductsModel {
           title: selectedProduct.title,
           description: selectedProduct.description,
           price: selectedProduct.price,
+          location: selectedProduct.location,
           image: selectedProduct.image,
           userId: selectedProduct.userId,
           userEmail: selectedProduct.userEmail,

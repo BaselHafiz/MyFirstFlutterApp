@@ -27,12 +27,26 @@ class _ProductEditPageState extends State<ProductEditPage> {
   final _titleFocusNode = FocusNode();
   final _descriptionFocusNode = FocusNode();
   final _priceFocusNode = FocusNode();
+  final TextEditingController _titleTextController = TextEditingController();
 
   Widget _buildTitleTextField(Product product) {
+    if (product == null && _titleTextController.text.trim() == '') {
+      _titleTextController.text = '';
+    } else if (product != null && _titleTextController.text.trim() == '') {
+      _titleTextController.text = product.title;
+    } else if (product != null && _titleTextController.text.trim() != '') {
+      _titleTextController.text = _titleTextController.text;
+    } else if (product == null && _titleTextController.text.trim() != '') {
+      _titleTextController.text = _titleTextController.text;
+    } else {
+      _titleTextController.text = '';
+    }
+
     return EnsureVisibleWhenFocused(
       focusNode: _titleFocusNode,
       child: TextFormField(
         focusNode: _titleFocusNode,
+        controller: _titleTextController,
         validator: (String value) {
           if (value.isEmpty) {
             return 'Title is required';
@@ -40,7 +54,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
             return 'Title should be 5+ characters';
           }
         },
-        initialValue: product == null ? '' : product.title,
+//        initialValue: product == null ? '' : product.title,
         decoration: InputDecoration(labelText: 'Product Title'),
         onSaved: (String value) {
           _formData['title'] = value;
@@ -133,9 +147,13 @@ class _ProductEditPageState extends State<ProductEditPage> {
     }
 
     if (selectedProductIndex == -1) {
-      addProduct(_formData['title'], _formData['description'],
-              _formData['price'], _formData['image'], _formData['location'])
-          .then((bool success) {
+      addProduct(
+        _titleTextController.text,
+        _formData['description'],
+        _formData['price'],
+        _formData['image'],
+        _formData['location'],
+      ).then((bool success) {
         if (success) {
           Navigator.pushReplacementNamed(context, '/')
               .then((_) => setSelectedProduct(null));
@@ -160,10 +178,11 @@ class _ProductEditPageState extends State<ProductEditPage> {
       });
     } else {
       updateProduct(
-        _formData['title'],
+        _titleTextController.text,
         _formData['description'],
         _formData['price'],
         _formData['image'],
+        _formData['location'],
       ).then((bool success) {
         if (success) {
           Navigator.pushReplacementNamed(context, '/')
