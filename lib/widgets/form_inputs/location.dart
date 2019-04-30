@@ -5,6 +5,7 @@ import 'package:map_view/map_view.dart';
 import 'package:map_view/static_map_provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async';
 import '../../models/location_data.dart';
 import 'package:location/location.dart' as geoloc;
 
@@ -30,7 +31,7 @@ class _LocationInputState extends State<LocationInput> {
   void initState() {
     _addressInputFocusNode.addListener(_updateLocation);
     if (widget.product != null) {
-      _getStaticMap(widget.product.location.address, false);
+      _getStaticMap(widget.product.location.address, geocode: false);
     }
     super.initState();
   }
@@ -47,7 +48,8 @@ class _LocationInputState extends State<LocationInput> {
     }
   }
 
-  void _getStaticMap(String address, [geocode = true]) async {
+  void _getStaticMap(String address,
+      {bool geocode = true, double lat, double lng}) async {
     if (address.isEmpty) {
       setState(() {
         _staticMapUri = null;
@@ -59,7 +61,10 @@ class _LocationInputState extends State<LocationInput> {
       final Uri uri = Uri.https(
         'maps.googleapis.com',
         '/maps/api/geocode/json',
-        {'address': address, 'key': 'AIzaSyBbKsb2PPKoMLl2-BLwIM9oeoXaFJEZQUg'},
+        {
+          'address': address,
+          'key': 'AIzaSyBbKsb2PPKoMLl2-BLwIM9oeoXaFJEZQUg',
+        },
       );
       final http.Response response = await http.get(uri);
       final decodedResponse = json.decode(response.body);
@@ -70,8 +75,11 @@ class _LocationInputState extends State<LocationInput> {
           latitude: coordinates['lat'],
           longitude: coordinates['lng'],
           address: formattedAddress);
-    } else {
+    } else if (lat == null && lng == null) {
       _locationData = widget.product.location;
+    } else {
+      _locationData =
+          LocationData(address: address, latitude: lat, longitude: lng);
     }
 
     final StaticMapProvider staticMapProvider =
@@ -91,9 +99,30 @@ class _LocationInputState extends State<LocationInput> {
     });
   }
 
+  Future<String> _getAddress(double lat, double lng) async {
+    final Uri uri = Uri.https(
+      'maps.googleapis.com',
+      '/maps/api/geocode/json',
+      {
+        'latlng': '${lat.toString()},${lng.toString()}',
+        'key': 'AIzaSyBbKsb2PPKoMLl2-BLwIM9oeoXaFJEZQUg',
+      },
+    );
+    final http.Response response = await http.get(uri);
+    final decodedResponse = json.decode(response.body);
+    final formattedAddress = decodedResponse['results'][0]['formatted_address'];
+    return formattedAddress;
+  }
+
   void _getUserLocation() async {
     final location = geoloc.Location();
     final currentLocation = await location.getLocation();
+    final address = await _getAddress(
+        currentLocation['latitude'], currentLocation['longitude']);
+    _getStaticMap(address,
+        geocode: false,
+        lat: currentLocation['latitude'],
+        lng: currentLocation['longitude']);
   }
 
   @override
