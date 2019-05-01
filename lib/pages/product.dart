@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-
+import 'package:map_view/map_view.dart';
 import 'package:my_first_flutter_app/widgets/products/title_default.dart';
 import '../models/product.dart';
 
@@ -9,18 +9,48 @@ class ProductPage extends StatelessWidget {
 
   ProductPage(this.product);
 
+  void _showMap() {
+    final MapView mapView = MapView();
+    final List<Marker> markers = <Marker>[
+      Marker('position', 'position', product.location.latitude,
+          product.location.longitude)
+    ];
+    final cameraPosition = CameraPosition(
+        Location(product.location.latitude, product.location.longitude), 14);
+    mapView.show(
+      MapOptions(
+          initialCameraPosition: cameraPosition,
+          title: 'Product Loation',
+          mapViewType: MapViewType.normal),
+      toolbarActions: [ToolbarAction('Close', 1)],
+    );
+
+    mapView.onToolbarAction.listen((int id) {
+      if (id == 1) {
+        mapView.dismiss();
+      }
+    });
+
+    mapView.onMapReady.listen((_) {
+      mapView.setMarkers(markers);
+    });
+  }
+
   Widget _buildAddressPriceRow(String address, double price) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text(
-          address,
-          style: TextStyle(
-            color: Colors.grey,
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'cambria',
+        GestureDetector(
+          child: Text(
+            address,
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'cambria',
+            ),
           ),
+          onTap: _showMap,
         ),
         Container(
           padding: EdgeInsets.symmetric(horizontal: 6, vertical: 6),
@@ -63,7 +93,8 @@ class ProductPage extends StatelessWidget {
               child: TitleDefault(product.title),
             ),
             Container(
-              child: _buildAddressPriceRow(product.location.address, product.price),
+              child: _buildAddressPriceRow(
+                  product.location.address, product.price),
             ),
             Text(
               product.description,
