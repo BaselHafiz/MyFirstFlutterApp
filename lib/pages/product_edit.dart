@@ -6,6 +6,7 @@ import '../models/product.dart';
 import '../scoped_models/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../widgets/form_inputs/location.dart';
+import '../widgets/form_inputs/image.dart';
 
 class ProductEditPage extends StatefulWidget {
   @override
@@ -231,9 +232,11 @@ class _ProductEditPageState extends State<ProductEditPage> {
               _buildTitleTextField(product),
               _buildDescriptionTextField(product),
               _buildPriceTextField(product),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               LocationInput(_setLocation, product),
-              SizedBox(height: 15),
+              SizedBox(height: 10),
+              ImageInput(),
+              SizedBox(height: 10),
               _buildSubmitButton(),
             ],
           ),
