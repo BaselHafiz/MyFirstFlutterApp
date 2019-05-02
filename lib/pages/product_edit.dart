@@ -29,6 +29,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
   final _descriptionFocusNode = FocusNode();
   final _priceFocusNode = FocusNode();
   final TextEditingController _titleTextController = TextEditingController();
+  final TextEditingController _descriptionTextController =
+      TextEditingController();
 
   Widget _buildTitleTextField(Product product) {
     if (product == null && _titleTextController.text.trim() == '') {
@@ -65,9 +67,17 @@ class _ProductEditPageState extends State<ProductEditPage> {
   }
 
   Widget _buildDescriptionTextField(Product product) {
+    if (product == null && _descriptionTextController.text.trim() == '') {
+      _descriptionTextController.text = '';
+    } else if (product != null &&
+        _descriptionTextController.text.trim() == '') {
+      _descriptionTextController.text = product.description;
+    }
+
     return EnsureVisibleWhenFocused(
       focusNode: _descriptionFocusNode,
       child: TextFormField(
+        controller: _descriptionTextController,
         focusNode: _descriptionFocusNode,
         validator: (String value) {
           if (value.isEmpty) {
@@ -76,7 +86,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
             return 'Description should be 10+ characters';
           }
         },
-        initialValue: product == null ? '' : product.description,
+//        initialValue: product == null ? '' : product.description,
         decoration: InputDecoration(labelText: 'Product Description'),
         maxLines: 3,
         onSaved: (String value) {
@@ -150,7 +160,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     if (selectedProductIndex == -1) {
       addProduct(
         _titleTextController.text,
-        _formData['description'],
+        _descriptionTextController.text,
         _formData['price'],
         _formData['image'],
         _formData['location'],
@@ -180,7 +190,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     } else {
       updateProduct(
         _titleTextController.text,
-        _formData['description'],
+        _descriptionTextController.text,
         _formData['price'],
         _formData['image'],
         _formData['location'],
