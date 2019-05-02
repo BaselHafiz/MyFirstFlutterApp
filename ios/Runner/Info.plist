@@ -30,6 +30,10 @@
     <string>User location 1 is required to add a product location</string>
     <key>NSLocationAlwaysUsageDescription</key>
     <string>User location 2 is required to add a product location</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>My message no. 1</string>
+    <key>NSCameraUsageDescription</key>
+    <string>My message no. 2</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
