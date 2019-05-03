@@ -4,6 +4,9 @@ import '../models/product.dart';
 import '../models/user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:io';
+import 'package:mime/mime.dart';
+import 'package:http_parser/http_parser.dart';
 import 'dart:async';
 import '../models/auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -116,10 +119,51 @@ class ProductsModel extends ConnectedProductsModel {
     });
   }
 
+  Future<Map<String, dynamic>> uploadImage(File image,
+      {String imagePath}) async {
+    final mimeTypeData = lookupMimeType(image.path).split('/');
+    final imageUploadRequest = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+            'https://us-central1-my-first-flutter-app-c933e.cloudfunctions.net/storeImage'));
+    final file = await http.MultipartFile.fromPath(
+      'image',
+      image.path,
+      contentType: MediaType(mimeTypeData[0], mimeTypeData[1]),
+    );
+    imageUploadRequest.files.add(file);
+    if (imagePath != null) {
+      imageUploadRequest.fields['imagePath'] = Uri.encodeComponent(imagePath);
+    }
+    imageUploadRequest.headers['Authorization'] =
+        'Bearer ${_authenticatedUser.token}';
+
+    try {
+      final streamedResponse = await imageUploadRequest.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        print('Something went wrong !');
+        print(json.decode(response.body));
+        return null;
+      }
+      final responseData = json.decode(response.body);
+      return responseData;
+    } catch (error) {
+      print(error);
+      return null;
+    }
+  }
+
   Future<bool> addProduct(String title, String description, double price,
-      String image, LocationData locData) async {
+      File image, LocationData locData) async {
     _isLoading = true;
     notifyListeners();
+    final uploadedData = await uploadImage(image);
+    if (uploadedData == null) {
+      print('uploading failed !');
+      return false;
+    }
+
     final Map<String, dynamic> productData = {
       'title': title,
       'description': description,
@@ -128,6 +172,8 @@ class ProductsModel extends ConnectedProductsModel {
       'price': price,
       'userId': _authenticatedUser.id,
       'userEmail': _authenticatedUser.email,
+      'imagePath': uploadedData['imagePath'],
+      'imageUrl': uploadedData['imageUrl'],
       'loc_lat': locData.latitude,
       'loc_lng': locData.longitude,
       'loc_address': locData.address,
@@ -150,7 +196,7 @@ class ProductsModel extends ConnectedProductsModel {
           title: title,
           description: description,
           price: price,
-          image: image,
+          image: uploadedData['imageUrl'],
           location: locData,
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id);
@@ -167,8 +213,8 @@ class ProductsModel extends ConnectedProductsModel {
     }
   }
 
-  Future<bool> updateProduct(
-      String title, String description, double price, String image, LocationData locData) {
+  Future<bool> updateProduct(String title, String description, double price,
+      String image, LocationData locData) {
     _isLoading = true;
     notifyListeners();
 
