@@ -91,7 +91,8 @@ class ProductsModel extends ConnectedProductsModel {
             id: productId,
             title: productData['title'],
             description: productData['description'],
-            image: productData['image'],
+            image: productData['imageUrl'],
+            imagePath: productData['imagePath'],
             price: productData['price'],
             location: LocationData(
                 address: productData['loc_address'],
@@ -167,8 +168,6 @@ class ProductsModel extends ConnectedProductsModel {
     final Map<String, dynamic> productData = {
       'title': title,
       'description': description,
-      'image':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Chocolatebrownie.JPG/250px-Chocolatebrownie.JPG',
       'price': price,
       'userId': _authenticatedUser.id,
       'userEmail': _authenticatedUser.email,
@@ -214,15 +213,29 @@ class ProductsModel extends ConnectedProductsModel {
   }
 
   Future<bool> updateProduct(String title, String description, double price,
-      String image, LocationData locData) {
+      File image, LocationData locData) async {
     _isLoading = true;
     notifyListeners();
+
+    String imageUrl = selectedProduct.image;
+    String imagePath = selectedProduct.imagePath;
+
+    if (image != null) {
+      final uploadedData = await uploadImage(image);
+      if (uploadedData == null) {
+        print('uploading failed !');
+        return false;
+      }
+
+      imageUrl = uploadedData['imageUrl'];
+      imagePath = uploadedData['imagePath'];
+    }
 
     final Map<String, dynamic> updateData = {
       'title': title,
       'description': description,
-      'image':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Chocolatebrownie.JPG/250px-Chocolatebrownie.JPG',
+      'imageUrl': imageUrl,
+      'imagePath': imagePath,
       'price': price,
       'userId': _authenticatedUser.id,
       'userEmail': _authenticatedUser.email,
@@ -231,11 +244,11 @@ class ProductsModel extends ConnectedProductsModel {
       'loc_address': locData.address,
     };
 
-    return http
-        .put(
-            'https://my-first-flutter-app-c933e.firebaseio.com/products/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
-            body: json.encode(updateData))
-        .then((http.Response response) {
+    try {
+      final http.Response response = await http.put(
+          'https://my-first-flutter-app-c933e.firebaseio.com/products/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
+          body: json.encode(updateData));
+
       _isLoading = false;
       notifyListeners();
       final Product updatedProduct = Product(
@@ -244,16 +257,17 @@ class ProductsModel extends ConnectedProductsModel {
           description: description,
           price: price,
           location: locData,
-          image: image,
+          image: imageUrl,
+          imagePath: imagePath,
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId);
       _products[selectedProductIndex] = updatedProduct;
       return true;
-    }).catchError((error) {
+    } catch (error) {
       _isLoading = false;
       notifyListeners();
       return false;
-    });
+    }
   }
 
   void selectProduct(String productId) {
@@ -273,6 +287,7 @@ class ProductsModel extends ConnectedProductsModel {
         price: selectedProduct.price,
         location: selectedProduct.location,
         image: selectedProduct.image,
+        imagePath: selectedProduct.imagePath,
         userId: selectedProduct.userId,
         userEmail: selectedProduct.userEmail,
         isFavorite: newFavoriteStatus);
@@ -297,6 +312,7 @@ class ProductsModel extends ConnectedProductsModel {
           price: selectedProduct.price,
           location: selectedProduct.location,
           image: selectedProduct.image,
+          imagePath: selectedProduct.imagePath,
           userId: selectedProduct.userId,
           userEmail: selectedProduct.userEmail,
           isFavorite: !newFavoriteStatus);
