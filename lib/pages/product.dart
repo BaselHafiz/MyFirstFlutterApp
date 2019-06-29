@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:map_view/map_view.dart';
 import 'package:my_first_flutter_app/widgets/products/title_default.dart';
 import '../models/product.dart';
+import '../widgets/products/product_fab.dart';
 
 class ProductPage extends StatelessWidget {
   final Product product;
@@ -107,6 +108,7 @@ class ProductPage extends StatelessWidget {
             ),
           ],
         ),
+        floatingActionButton: ProductFab(),
       ),
     );
   }
