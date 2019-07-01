@@ -15,7 +15,16 @@ class ProductFab extends StatefulWidget {
   }
 }
 
-class _ProductFabState extends State<ProductFab> {
+class _ProductFabState extends State<ProductFab> with TickerProviderStateMixin {
+  AnimationController _controller;
+
+  @override
+  void initState() {
+    _controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant(
@@ -27,45 +36,61 @@ class _ProductFabState extends State<ProductFab> {
               height: 55,
               width: 56,
               alignment: FractionalOffset.topCenter,
-              child: FloatingActionButton(
-                onPressed: () async {
-                  final url = 'mailto:${widget.product.userEmail}';
-                  if (await canLaunch(url)) {
-                    await launch(url);
-                  } else {
-                    throw 'Could not launch';
-                  }
-                },
-                child: Icon(
-                  Icons.mail,
-                  color: Theme.of(context).primaryColor,
+              child: ScaleTransition(
+                scale: CurvedAnimation(
+                    parent: _controller,
+                    curve: Interval(0.0, 1.0, curve: Curves.easeOut)),
+                child: FloatingActionButton(
+                  onPressed: () async {
+                    final url = 'mailto:${widget.product.userEmail}';
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      throw 'Could not launch';
+                    }
+                  },
+                  child: Icon(
+                    Icons.mail,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  mini: true,
+                  heroTag: 'contact',
+                  backgroundColor: Theme.of(context).cardColor,
                 ),
-                mini: true,
-                heroTag: 'contact',
-                backgroundColor: Theme.of(context).cardColor,
               ),
             ),
             Container(
               height: 55,
               width: 56,
               alignment: FractionalOffset.topCenter,
-              child: FloatingActionButton(
-                onPressed: () {
-                  model.toggleProductFavoriteStatus();
-                },
-                child: Icon(
-                  model.selectedProduct.isFavorite
-                      ? Icons.favorite
-                      : Icons.favorite_border,
-                  color: Colors.red,
+              child: ScaleTransition(
+                scale: CurvedAnimation(
+                    parent: _controller,
+                    curve: Interval(0.0, 0.3, curve: Curves.easeOut)),
+                child: FloatingActionButton(
+                  onPressed: () {
+                    model.toggleProductFavoriteStatus();
+                  },
+                  child: Icon(
+                    model.selectedProduct.isFavorite
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    color: Colors.red,
+                  ),
+                  mini: true,
+                  heroTag: 'favorite',
+                  backgroundColor: Theme.of(context).cardColor,
                 ),
-                mini: true,
-                heroTag: 'favorite',
-                backgroundColor: Theme.of(context).cardColor,
               ),
             ),
             FloatingActionButton(
-              onPressed: () {},
+              onPressed: () {
+                if (_controller.isDismissed) {
+                  _controller.forward();
+                } else {
+                  _controller.reverse();
+                }
+              },
               child: Icon(Icons.more_vert),
               heroTag: 'options',
             ),
