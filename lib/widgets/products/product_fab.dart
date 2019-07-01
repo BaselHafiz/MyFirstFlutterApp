@@ -3,6 +3,7 @@ import '../../models/product.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../../scoped_models/main.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:math' as math;
 
 class ProductFab extends StatefulWidget {
   final Product product;
@@ -91,7 +92,16 @@ class _ProductFabState extends State<ProductFab> with TickerProviderStateMixin {
                   _controller.reverse();
                 }
               },
-              child: Icon(Icons.more_vert),
+              child: AnimatedBuilder(
+                animation: _controller,
+                builder: (BuildContext context, Widget child) {
+                  return Transform(
+                    alignment: FractionalOffset.center,
+                    transform: Matrix4.rotationZ(_controller.value * 0.5 * math.pi),
+                    child: Icon(_controller.isDismissed ? Icons.more_vert : Icons.close),
+                  );
+                },
+              ),
               heroTag: 'options',
             ),
           ],
