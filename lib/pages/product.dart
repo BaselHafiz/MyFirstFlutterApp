@@ -77,16 +77,12 @@ class ProductPage extends StatelessWidget {
         return Future.value(false);
       },
       child: Scaffold(
-        /*appBar: AppBar(
-          title: Text(product.title),
-        ),*/
         body: CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
               expandedHeight: 256.0,
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
-//                centerTitle: true,
                 title: Text(product.title),
                 background: Hero(
                   tag: product.id,
