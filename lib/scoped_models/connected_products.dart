@@ -433,6 +433,7 @@ class UsersModel extends ConnectedProductsModel {
     _authenticatedUser = null;
     _authTimer.cancel();
     _userSubject.add(false);
+    _selProductId = null;
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.remove('token');
     preferences.remove('userId');
