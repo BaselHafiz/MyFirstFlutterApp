@@ -32,6 +32,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
   final TextEditingController _titleTextController = TextEditingController();
   final TextEditingController _descriptionTextController =
       TextEditingController();
+  final TextEditingController _priceTextController = TextEditingController();
 
   Widget _buildTitleTextField(Product product) {
     if (product == null && _titleTextController.text.trim() == '') {
@@ -98,9 +99,17 @@ class _ProductEditPageState extends State<ProductEditPage> {
   }
 
   Widget _buildPriceTextField(Product product) {
+    if (product == null && _priceTextController.text.trim() == '') {
+      _priceTextController.text = '';
+    } else if (product != null &&
+        _priceTextController.text.trim() == '') {
+      _priceTextController.text = product.price.toString();
+    }
+
     return EnsureVisibleWhenFocused(
       focusNode: _priceFocusNode,
       child: TextFormField(
+        controller: _priceTextController,
         focusNode: _priceFocusNode,
         validator: (String value) {
           if (value.isEmpty) {
@@ -112,7 +121,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
             return 'Price should be \$ 50+';
           }
         },
-        initialValue: product == null ? '' : product.price.toString(),
+//        initialValue: product == null ? '' : product.price.toString(),
         decoration: InputDecoration(labelText: 'Product Price'),
         keyboardType: TextInputType.number,
         onSaved: (String value) {
@@ -167,7 +176,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
       addProduct(
         _titleTextController.text,
         _descriptionTextController.text,
-        _formData['price'],
+        double.parse(_priceTextController.text),
         _formData['image'],
         _formData['location'],
       ).then((bool success) {
@@ -197,7 +206,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
       updateProduct(
         _titleTextController.text,
         _descriptionTextController.text,
-        _formData['price'],
+        double.parse(_priceTextController.text),
         _formData['image'],
         _formData['location'],
       ).then((bool success) {
