@@ -70,7 +70,7 @@ class _ProductFabState extends State<ProductFab> with TickerProviderStateMixin {
                     curve: Interval(0.0, 0.3, curve: Curves.easeOut)),
                 child: FloatingActionButton(
                   onPressed: () {
-                    model.toggleProductFavoriteStatus();
+                    model.toggleProductFavoriteStatus(model.selectedProduct);
                   },
                   child: Icon(
                     model.selectedProduct.isFavorite
