@@ -58,11 +58,7 @@ class ProductsAdminPage extends StatelessWidget {
             ProductEditPage(),
             ScopedModelDescendant<MainModel>(
               builder: (BuildContext context, Widget child, MainModel model) {
-                if (model.allProducts.length > 0) {
                   return ProductListPage(mainModel);
-                } else {
-                  return Center(child: Text('No products found !'));
-                }
               },
             ),
           ],

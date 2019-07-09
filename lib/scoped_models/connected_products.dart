@@ -74,6 +74,7 @@ class ProductsModel extends ConnectedProductsModel {
 
   Future<Null> fetchProducts({onlyForUser = false}) {
     _isLoading = true;
+    _products.clear();
     notifyListeners();
     return http
         .get(

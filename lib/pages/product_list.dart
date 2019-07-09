@@ -76,9 +76,7 @@ class _ProductListPageState extends State<ProductListPage> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
-        if (model.allProducts.length > 0) {
             return _buildProductList(model);
-        }
       },
     );
   }
