@@ -9,9 +9,10 @@ import './scoped_models/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:map_view/map_view.dart';
 import './widgets/helpers/custom_route.dart';
+import 'shared/global_config.dart';
 
 void main() {
-  MapView.setApiKey('AIzaSyBbKsb2PPKoMLl2-BLwIM9oeoXaFJEZQUg');
+  MapView.setApiKey(apiKey);
   runApp(MyApp());
 }
 

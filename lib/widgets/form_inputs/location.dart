@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'dart:async';
 import '../../models/location_data.dart';
 import 'package:location/location.dart' as geoloc;
+import '../../shared/global_config.dart';
 
 class LocationInput extends StatefulWidget {
   final Function setLocation;
@@ -63,7 +64,7 @@ class _LocationInputState extends State<LocationInput> {
         '/maps/api/geocode/json',
         {
           'address': address,
-          'key': 'AIzaSyBbKsb2PPKoMLl2-BLwIM9oeoXaFJEZQUg',
+          'key': apiKey,
         },
       );
       final http.Response response = await http.get(uri);
@@ -84,7 +85,7 @@ class _LocationInputState extends State<LocationInput> {
 
     if (mounted) {
       final StaticMapProvider staticMapProvider =
-          StaticMapProvider('AIzaSyBbKsb2PPKoMLl2-BLwIM9oeoXaFJEZQUg');
+          StaticMapProvider(apiKey);
       final Uri staticMapUri = staticMapProvider.getStaticUriWithMarkers([
         Marker('position', 'position', _locationData.latitude,
             _locationData.longitude)
@@ -107,7 +108,7 @@ class _LocationInputState extends State<LocationInput> {
       '/maps/api/geocode/json',
       {
         'latlng': '${lat.toString()},${lng.toString()}',
-        'key': 'AIzaSyBbKsb2PPKoMLl2-BLwIM9oeoXaFJEZQUg',
+        'key': apiKey,
       },
     );
     final http.Response response = await http.get(uri);
