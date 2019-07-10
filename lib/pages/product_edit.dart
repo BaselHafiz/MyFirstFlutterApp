@@ -176,7 +176,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
       addProduct(
         _titleTextController.text,
         _descriptionTextController.text,
-        double.parse(_priceTextController.text),
+        double.parse(_priceTextController.text.replaceFirst(RegExp(r','), '.')),
         _formData['image'],
         _formData['location'],
       ).then((bool success) {
@@ -206,7 +206,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
       updateProduct(
         _titleTextController.text,
         _descriptionTextController.text,
-        double.parse(_priceTextController.text),
+        double.parse(_priceTextController.text.replaceFirst(RegExp(r','), '.')),
         _formData['image'],
         _formData['location'],
       ).then((bool success) {
