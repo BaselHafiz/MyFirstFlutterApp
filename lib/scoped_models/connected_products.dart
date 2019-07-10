@@ -72,9 +72,11 @@ class ProductsModel extends ConnectedProductsModel {
     });
   }
 
-  Future<Null> fetchProducts({onlyForUser = false}) {
+  Future<Null> fetchProducts({onlyForUser = false, clearExisting = false}) {
     _isLoading = true;
-    _products.clear();
+    if (clearExisting) {
+      _products.clear();
+    }
     notifyListeners();
     return http
         .get(
