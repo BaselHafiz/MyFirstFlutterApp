@@ -199,6 +199,7 @@ class ProductsModel extends ConnectedProductsModel {
           description: description,
           price: price,
           image: uploadedData['imageUrl'],
+          imagePath: uploadedData['imagePath'],
           location: locData,
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id);
@@ -248,7 +249,7 @@ class ProductsModel extends ConnectedProductsModel {
     };
 
     try {
-      final http.Response response = await http.put(
+      await http.put(
           'https://my-first-flutter-app-c933e.firebaseio.com/products/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
           body: json.encode(updateData));
 
