@@ -10,6 +10,8 @@ import 'package:map_view/map_view.dart';
 import './widgets/helpers/custom_route.dart';
 import 'shared/global_config.dart';
 import './shared/adaptive_theme.dart';
+import 'package:flutter/services.dart';
+import 'dart:async';
 
 void main() {
   MapView.setApiKey(apiKey);
@@ -25,7 +27,19 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final MainModel _mainModel = MainModel();
+  final _platformChannel = MethodChannel('battery');
   bool _isAuthenticated = false;
+
+  Future<Null> _getBatteryLevel() async {
+    String batteryLevel;
+    try {
+      final int result = await _platformChannel.invokeMethod('getBatteryLevel');
+      batteryLevel = 'Battery level is $result %.';
+    } catch (error) {
+      batteryLevel = 'Failed to get battery level.';
+    }
+    print(batteryLevel);
+  }
 
   @override
   void initState() {
