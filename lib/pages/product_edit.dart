@@ -9,6 +9,7 @@ import '../scoped_models/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../widgets/form_inputs/location.dart';
 import '../widgets/form_inputs/image.dart';
+import '../widgets/products/adaptive_progress_indicator.dart';
 
 class ProductEditPage extends StatefulWidget {
   @override
@@ -140,9 +141,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
       builder: (BuildContext context, Widget child, MainModel model) {
         return model.isLoading
             ? Center(
-                child: Theme.of(context).platform == TargetPlatform.android
-                    ? CircularProgressIndicator()
-                    : CupertinoActivityIndicator())
+                child: AdaptiveProgressIndicator())
             : RaisedButton(
                 color: Theme.of(context).primaryColor,
                 textColor: Colors.white,
