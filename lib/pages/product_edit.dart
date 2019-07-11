@@ -140,8 +140,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
         return model.isLoading
-            ? Center(
-                child: AdaptiveProgressIndicator())
+            ? Center(child: AdaptiveProgressIndicator())
             : RaisedButton(
                 color: Theme.of(context).primaryColor,
                 textColor: Colors.white,
@@ -290,6 +289,9 @@ class _ProductEditPageState extends State<ProductEditPage> {
               ? pageContent
               : Scaffold(
                   appBar: AppBar(
+                    elevation: Theme.of(context).platform == TargetPlatform.iOS
+                        ? 0
+                        : 5,
                     title: Text('Edit Product'),
                   ),
                   body: pageContent,

@@ -17,6 +17,7 @@ class ProductsAdminPage extends StatelessWidget {
           AppBar(
             automaticallyImplyLeading: false,
             title: Text('Choose'),
+            elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0 : 5,
           ),
           ListTile(
             leading: Icon(Icons.shop),
@@ -40,6 +41,7 @@ class ProductsAdminPage extends StatelessWidget {
         drawer: _buildSideDrawer(context),
         appBar: AppBar(
           title: Text('Manage Products'),
+          elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0 : 5,
           bottom: TabBar(
             tabs: <Widget>[
               Tab(
@@ -58,7 +60,7 @@ class ProductsAdminPage extends StatelessWidget {
             ProductEditPage(),
             ScopedModelDescendant<MainModel>(
               builder: (BuildContext context, Widget child, MainModel model) {
-                  return ProductListPage(mainModel);
+                return ProductListPage(mainModel);
               },
             ),
           ],

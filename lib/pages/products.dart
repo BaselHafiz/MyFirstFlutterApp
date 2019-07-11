@@ -29,6 +29,7 @@ class _ProductsPageState extends State<ProductsPage> {
           AppBar(
             automaticallyImplyLeading: false,
             title: Text('Choose'),
+            elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0 : 5,
           ),
           ListTile(
             leading: Icon(Icons.edit),
@@ -68,6 +69,7 @@ class _ProductsPageState extends State<ProductsPage> {
       drawer: _buildSideDrawer(context),
       appBar: AppBar(
         title: Text('EasyList'),
+        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0 : 5,
         actions: <Widget>[
           ScopedModelDescendant<MainModel>(
             builder: (BuildContext context, Widget child, MainModel model) {
