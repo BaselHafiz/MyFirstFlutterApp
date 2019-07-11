@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:my_first_flutter_app/models/location_data.dart';
 import 'dart:async';
 import 'dart:io';
@@ -101,8 +102,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
   Widget _buildPriceTextField(Product product) {
     if (product == null && _priceTextController.text.trim() == '') {
       _priceTextController.text = '';
-    } else if (product != null &&
-        _priceTextController.text.trim() == '') {
+    } else if (product != null && _priceTextController.text.trim() == '') {
       _priceTextController.text = product.price.toString();
     }
 
@@ -139,7 +139,10 @@ class _ProductEditPageState extends State<ProductEditPage> {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
         return model.isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? Center(
+                child: Theme.of(context).platform == TargetPlatform.android
+                    ? CircularProgressIndicator()
+                    : CupertinoActivityIndicator())
             : RaisedButton(
                 color: Theme.of(context).primaryColor,
                 textColor: Colors.white,
