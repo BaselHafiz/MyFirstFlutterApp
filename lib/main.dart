@@ -60,6 +60,7 @@ class _MyAppState extends State<MyApp> {
     return ScopedModel<MainModel>(
       model: _mainModel,
       child: MaterialApp(
+        title: "Basel's EasyList",
         theme: getAdaptiveThemeData(context),
         routes: {
           '/': (BuildContext context) =>
