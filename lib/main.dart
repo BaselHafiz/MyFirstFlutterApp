@@ -27,16 +27,18 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final MainModel _mainModel = MainModel();
-  final _platformChannel = MethodChannel('battery');
+  final _platformChannel = MethodChannel('flutter-battery');
   bool _isAuthenticated = false;
 
-  Future<Null> _getBatteryLevel() async {
+
+  Future<Null> _getBatteryLevelOfMyEmulator() async {
     String batteryLevel;
     try {
       final int result = await _platformChannel.invokeMethod('getBatteryLevel');
       batteryLevel = 'Battery level is $result %.';
     } catch (error) {
       batteryLevel = 'Failed to get battery level.';
+      print(error);
     }
     print(batteryLevel);
   }
@@ -49,6 +51,7 @@ class _MyAppState extends State<MyApp> {
         _isAuthenticated = isAuthenticated;
       });
     });
+    _getBatteryLevelOfMyEmulator();
     super.initState();
   }
 
